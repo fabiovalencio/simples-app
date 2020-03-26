@@ -42,8 +42,10 @@
 		142D317533F22A75F64F8625 /* Pods-Simples-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Simples-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Simples-tvOSTests/Pods-Simples-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		21FFB724CC2A4528961DC701 /* Pods-Simples-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Simples-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Simples-tvOS/Pods-Simples-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		2443B0384FF27BCE6D2A7E55 /* libPods-Simples-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Simples-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		36F79F97915F786E8C08C64F /* Pods-Simples.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Simples.staging.xcconfig"; path = "Target Support Files/Pods-Simples/Pods-Simples.staging.xcconfig"; sourceTree = "<group>"; };
 		50B0C0BC26C9FB3E1FEE06BA /* libPods-Simples.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Simples.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6983729E4D1E967CBF930B35 /* Pods-Simples-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Simples-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Simples-tvOSTests/Pods-Simples-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		6B46F7CC8AC4AB648A2912A4 /* Pods-SimplesTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimplesTests.staging.xcconfig"; path = "Target Support Files/Pods-SimplesTests/Pods-SimplesTests.staging.xcconfig"; sourceTree = "<group>"; };
 		79C92C4C0B6D20963089E754 /* Pods-Simples.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Simples.debug.xcconfig"; path = "Target Support Files/Pods-Simples/Pods-Simples.debug.xcconfig"; sourceTree = "<group>"; };
 		93F386FDABB7D31408CE06F9 /* Pods-Simples.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Simples.release.xcconfig"; path = "Target Support Files/Pods-Simples/Pods-Simples.release.xcconfig"; sourceTree = "<group>"; };
 		948E7CEE8A3984EB7B6532D5 /* libPods-SimplesTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SimplesTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,8 @@
 				6983729E4D1E967CBF930B35 /* Pods-Simples-tvOSTests.release.xcconfig */,
 				07943A8DF03326A95FF50133 /* Pods-SimplesTests.debug.xcconfig */,
 				F88B67C2C0EB8B219977F031 /* Pods-SimplesTests.release.xcconfig */,
+				36F79F97915F786E8C08C64F /* Pods-Simples.staging.xcconfig */,
+				6B46F7CC8AC4AB648A2912A4 /* Pods-SimplesTests.staging.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -682,7 +686,7 @@
 		};
 		DE3A337E242CD1C00089C17B /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 93F386FDABB7D31408CE06F9 /* Pods-Simples.release.xcconfig */;
+			baseConfigurationReference = 36F79F97915F786E8C08C64F /* Pods-Simples.staging.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Simples/+Simples.entitlements";
@@ -706,7 +710,7 @@
 		};
 		DE3A337F242CD1C00089C17B /* Staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F88B67C2C0EB8B219977F031 /* Pods-SimplesTests.release.xcconfig */;
+			baseConfigurationReference = 6B46F7CC8AC4AB648A2912A4 /* Pods-SimplesTests.staging.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";

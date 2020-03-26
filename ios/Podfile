@@ -3,6 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 target 'Simples' do
   # Pods for Simples
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -41,14 +42,4 @@ target 'Simples' do
   end
 
   use_native_modules!
-end
-
-target 'Simples-tvOS' do
-  # Pods for Simples-tvOS
-
-  target 'Simples-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
 end
