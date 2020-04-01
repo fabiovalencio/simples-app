@@ -1,11 +1,8 @@
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable react/prefer-stateless-function */
 import React, {Component} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default class RadioButton extends Component {
-  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }

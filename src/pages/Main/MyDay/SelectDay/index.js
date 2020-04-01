@@ -18,7 +18,7 @@ import pt from 'date-fns/locale/pt';
 import CalendarPicker from 'react-native-calendar-picker';
 import OneSignal from 'react-native-onesignal';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import Standard from '~/Config/Standard';
+import Standard from '~/pages/Main/Config/Standard';
 import RadioButton from '~/components/RadioButton';
 import api from '~/services/api';
 import Background from '~/components/Background';
@@ -290,9 +290,7 @@ export default class SelectDay extends Component {
       if (workout.data) {
         this.setDataWorkout(workout.data);
       }
-    } catch (error) {
-      // console.tron.log(error);
-    }
+    } catch (error) {}
   }
 
   fecthDataJson(array, name) {

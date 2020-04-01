@@ -18,7 +18,7 @@ import Orientation from 'react-native-orientation-locker';
 import RadioButton from '~/components/RadioButton';
 import api from '~/services/api';
 import Background from '~/components/Background';
-import Standard from '~/Config/Standard';
+import Standard from '~/pages/Main/Config/Standard';
 
 import {
   Container,
@@ -118,9 +118,7 @@ export default class Week extends Component {
     try {
       const response = await api.get(`/adjuncts/${week}`);
       this.setData(response.data);
-    } catch (error) {
-      // console.tron.log(error);
-    }
+    } catch (error) {}
   }
 
   componentDidMount = async () => {

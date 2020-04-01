@@ -1,24 +1,24 @@
 import React from 'react';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
+import {createStackNavigator} from 'react-navigation-stack';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {createStackNavigator} from 'react-navigation-stack';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
 
-import Profile from './pages/Main/Config/Profile';
+import SignIn from '~/pages/SignIn';
+import SignUp from '~/pages/SignUp';
 
-import SelectDay from './pages/Main/MyDay/SelectDay';
-import Week from './pages/Main/MyWeek/Week';
-import dayConfirm from './pages/Main/MyDay/dayConfirm';
-import weekPoints from './pages/Main/MyWeek/weekPoints';
-import Report from './pages/Main/Report';
-import FullScreen from './pages/Main/Report/FullScreen';
-import Config from './pages/Main/Config';
-import StandardList from './pages/Main/Config/StandardList';
-import standardView from './pages/Main/Config/StandardView';
-import About from './pages/Main/Config/About';
+import SelectDay from '~/pages/Main/MyDay/SelectDay';
+import Week from '~/pages/Main/MyWeek/Week';
+import dayConfirm from '~/pages/Main/MyDay/dayConfirm';
+import weekPoints from '~/pages/Main/MyWeek/weekPoints';
+import Report from '~/pages/Main/Report';
+import FullScreen from '~/pages/Main/Report/FullScreen';
+import Config from '~/pages/Main/Config';
+import Profile from '~/pages/Main/Config/Profile';
+import StandardList from '~/pages/Main/Config/StandardList';
+import standardView from '~/pages/Main/Config/StandardView';
+import About from '~/pages/Main/Config/About';
 
 export default (isSigned = false) =>
   createAppContainer(

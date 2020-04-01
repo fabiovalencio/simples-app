@@ -7,7 +7,7 @@ const INICIAL_STATE = {
 };
 
 export default function auth(state = INICIAL_STATE, action) {
-  return produce(state, draft => {
+  return produce(state, (draft) => {
     switch (action.type) {
       case '@auth/SIGN_IN_REQUEST': {
         draft.loading = true;

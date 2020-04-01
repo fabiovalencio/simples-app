@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import {PersistGate} from 'redux-persist/integration/react';
 import {Provider} from 'react-redux';
-import CodePush from 'react-native-code-push';
 import OneSignal from 'react-native-onesignal';
-// import {StatusBar} from 'react-native';
 
 import './config/ReactotronConfig';
 
@@ -26,17 +24,16 @@ class Index extends Component {
     OneSignal.removeEventListener('ids', this.onIds);
   }
 
-  onReceived = data => {};
+  onReceived = (data) => {};
 
-  onOpened = notification => {};
+  onOpened = (notification) => {};
 
-  onIds = id => {};
+  onIds = (id) => {};
 
   render() {
     return (
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          {/* <StatusBar barStyle="light-content" backgroundColor="##7159c1" /> */}
           <App />
         </PersistGate>
       </Provider>
@@ -44,6 +41,4 @@ class Index extends Component {
   }
 }
 
-export default CodePush({
-  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-})(Index);
+export default Index;
