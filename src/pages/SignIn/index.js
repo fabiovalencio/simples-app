@@ -3,9 +3,9 @@ import {Keyboard} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
 import Orientation from 'react-native-orientation-locker';
-import logo from '../../assets/logo.png';
-import Background from '../../components/Background';
-import {signInRequest} from '../../store/modules/auth/actions';
+import logo from '~/assets/logo.png';
+import Background from '~/components/Background';
+import {signInRequest} from '~/store/modules/auth/actions';
 
 import {
   Container,
@@ -19,10 +19,13 @@ import {
 
 export default function SignIn({navigation}) {
   useEffect(() => {
-    _willFocusSubscription = navigation.addListener('willFocus', payload => {
-      // lock to portrait when this screen is about to appear
-      Orientation.lockToPortrait();
-    });
+    this._willFocusSubscription = navigation.addListener(
+      'willFocus',
+      (payload) => {
+        // lock to portrait when this screen is about to appear
+        Orientation.lockToPortrait();
+      },
+    );
   }, [navigation]);
   const dispatch = useDispatch();
   const passwordRef = useRef();
@@ -30,7 +33,7 @@ export default function SignIn({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const loading = useSelector(state => state.auth.loading);
+  const loading = useSelector((state) => state.auth.loading);
 
   function handleSubmit() {
     dispatch(signInRequest(email, password));

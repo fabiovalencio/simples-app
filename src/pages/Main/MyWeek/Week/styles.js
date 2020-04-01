@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import Button from '../../../../components/Button';
+import Button from '~/components/Button';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
@@ -27,7 +27,7 @@ export const DateText = styled.Text`
 `;
 
 export const ViewPoint = styled.View`
-  display: ${props => (props.display ? props.display : 'none')};
+  display: ${(props) => (props.display ? props.display : 'none')};
   border: solid 1px;
   border-color: rgba(0, 0, 0, 0.1);
   border-top-left-radius: 8px;

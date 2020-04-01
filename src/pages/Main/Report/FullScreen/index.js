@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-
 import Orientation from 'react-native-orientation-locker';
 import {StyleSheet} from 'react-native';
 import {LineChart, YAxis, XAxis} from 'react-native-svg-charts';
 import {G, Line, Rect, Text} from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
-import api from '../../../../services/api';
-import Background from '../../../../components/Background';
+
+import api from '~/services/api';
+import Background from '~/components/Background';
 
 import {Container} from './styles';
 
@@ -49,7 +49,7 @@ export default class FullScreen extends Component {
     const {navigation} = this.props;
     this._willFocusSubscription = navigation.addListener(
       'willFocus',
-      payload => {
+      (payload) => {
         // lock to landscape
         Orientation.unlockAllOrientations();
         Orientation.addOrientationListener(this._onOrientationDidChange);
@@ -57,7 +57,7 @@ export default class FullScreen extends Component {
     );
 
     let deviceOrientation = null;
-    Orientation.getDeviceOrientation(orientation => {
+    Orientation.getDeviceOrientation((orientation) => {
       deviceOrientation = orientation;
     });
 
@@ -67,12 +67,11 @@ export default class FullScreen extends Component {
       weekC: [],
       orientation: deviceOrientation,
     };
-    console.tron.log(this.state.orientation);
   }
 
   componentDidMount = async () => {
     const {date} = this.state;
-    const weeksPoints = await api.get(`/points/weeks`, {
+    const weeksPoints = await api.get('/points/weeks', {
       params: {
         date,
         limit: 20,
@@ -85,15 +84,15 @@ export default class FullScreen extends Component {
     points.push(null);
     weeks.push(null);
 
-    weeksPoints.data.weeks.forEach(function(v) {
+    weeksPoints.data.weeks.forEach(function (v) {
       points.push(v.points);
       weeks.push({week: v.week, days: v.days, associations: v.associations});
-      colors.push(null);
+      colors.push('#ccc333');
     });
     points.push(null);
     weeks.push(null);
 
-    await new Promise(resolve =>
+    await new Promise((resolve) =>
       this.setState(
         {
           weekData: points,
@@ -113,7 +112,7 @@ export default class FullScreen extends Component {
   _onOrientationDidChange = () => {
     const {navigation} = this.props;
     setTimeout(() => {
-      navigation.goBack();
+      navigation.navigate('Report');
     }, 50);
   };
 
@@ -122,7 +121,7 @@ export default class FullScreen extends Component {
     const label = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
     const Tooltip = ({x, y, data}) => {
-      data = data.filter(d => d);
+      data = data.filter((d) => d);
 
       return data.map((value, index) => (
         <G
@@ -132,14 +131,14 @@ export default class FullScreen extends Component {
         >
           <G>
             <Rect
-              height={40}
-              width={40}
+              height={30}
+              width={30}
               stroke={weekC[index]}
               fill="white"
-              ry={20}
-              rx={20}
-              x={19.5}
-              y={y(value) - 19.5}
+              ry={15}
+              rx={15}
+              x={24.5}
+              y={y(value) - 14.5}
             />
             <Text
               x={39}
@@ -157,7 +156,7 @@ export default class FullScreen extends Component {
     const CustomGrid = ({x, y, data, ticks}) => (
       <G>
         {// Horizontal grid
-        ticks.map(tick => (
+        ticks.map((tick) => (
           <Line
             key={tick}
             x1="0%"
@@ -209,7 +208,7 @@ export default class FullScreen extends Component {
             <XAxis
               style={styles.xaxis}
               data={weekData}
-              formatLabel={index =>
+              formatLabel={(index) =>
                 weekData[index] !== null ? `Sem ${index}` : ''
               }
               contentInset={{left: 15, right: 15}}

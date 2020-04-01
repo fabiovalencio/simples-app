@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Background from '../../../../components/Background';
+import Background from '~/components/Background';
 
 import {
   Container,

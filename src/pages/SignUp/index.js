@@ -7,12 +7,12 @@ import RNPickerSelect from 'react-native-picker-select';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import logo from '../../assets/logo.png';
+import logo from '~/assets/logo.png';
 
-import Background from '../../components/Background';
-import {signUpRequest} from '../../store/modules/auth/actions';
+import Background from '~/components/Background';
+import {signUpRequest} from '~/store/modules/auth/actions';
 
-import api from '../../services/api';
+import api from '~/services/api';
 
 import {
   Container,
@@ -44,7 +44,7 @@ export default function SignUp({navigation}) {
   const dispatch = useDispatch();
   const passwordRef = useRef();
   const emailRef = useRef();
-  const loading = useSelector(state => state.auth.loading);
+  const loading = useSelector((state) => state.auth.loading);
 
   async function changeDate(event, date) {
     setDateFormatted(format(date, "dd 'de' MMM 'de' yyyy", {locale: pt}));
@@ -53,10 +53,10 @@ export default function SignUp({navigation}) {
 
   useEffect(() => {
     async function loadData() {
-      const resStates = await api.get(`states`);
+      const resStates = await api.get('states');
       setStates(resStates.data);
 
-      const resGenders = await api.get(`genders`);
+      const resGenders = await api.get('genders');
       setGenders(resGenders.data);
     }
     loadData();
@@ -151,7 +151,7 @@ export default function SignUp({navigation}) {
             //   return <Icon name="event" size={20} color="#3b5998" />;
             // }}
             style={pickerSelectStyles}
-            onValueChange={value => handleState(value)}
+            onValueChange={(value) => handleState(value)}
             items={states.states ? states.states : {}}
           />
 
@@ -161,7 +161,7 @@ export default function SignUp({navigation}) {
               color: '#3b5998',
             }}
             style={pickerSelectStyles}
-            onValueChange={value => changeCity(value)}
+            onValueChange={(value) => changeCity(value)}
             items={cities.cities ? cities.cities : {}}
           />
 
@@ -171,7 +171,7 @@ export default function SignUp({navigation}) {
               color: '#3b5998',
             }}
             style={pickerSelectStyles}
-            onValueChange={value => changeGender(value)}
+            onValueChange={(value) => changeGender(value)}
             items={genders.genders ? genders.genders : {}}
           />
 

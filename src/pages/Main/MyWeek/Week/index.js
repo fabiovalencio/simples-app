@@ -15,10 +15,10 @@ import {format, getYear, parseISO} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Modal from 'react-native-modal';
 import Orientation from 'react-native-orientation-locker';
-import RadioButton from '../../../../components/RadioButton';
-import api from '../../../../services/api';
-import Background from '../../../../components/Background';
-import Standard from '../../Config/Standard';
+import RadioButton from '~/components/RadioButton';
+import api from '~/services/api';
+import Background from '~/components/Background';
+import Standard from '~/Config/Standard';
 
 import {
   Container,
@@ -50,7 +50,7 @@ export default class Week extends Component {
     const {navigation} = this.props;
     this._willFocusSubscription = navigation.addListener(
       'willFocus',
-      payload => {
+      (payload) => {
         // lock to portrait when this screen is about to appear
         Orientation.lockToPortrait();
       },
@@ -86,18 +86,14 @@ export default class Week extends Component {
 
   async getUserData() {
     const {date} = this.state;
-    const res = await api.get(`/user-last-week`, {
+    const res = await api.get('/user-last-week', {
       params: {
         date,
       },
     });
 
-    const firstDayWeek = moment(res.data.week[0])
-      .utc()
-      .format('YYYY-MM-DD');
-    const lastDayWeek = moment(res.data.week[1])
-      .utc()
-      .format('YYYY-MM-DD');
+    const firstDayWeek = moment(res.data.week[0]).utc().format('YYYY-MM-DD');
+    const lastDayWeek = moment(res.data.week[1]).utc().format('YYYY-MM-DD');
     const week = res.data.week_number;
     // const userWeekDay = res.data.week_day;
     const dateFormated = `${format(parseISO(firstDayWeek), "dd'/'MM", {
@@ -106,7 +102,7 @@ export default class Week extends Component {
       locale: pt,
     })} - Semana ${week}`;
 
-    await new Promise(resolve =>
+    await new Promise((resolve) =>
       this.setState(
         {
           dateFormated,
@@ -123,12 +119,12 @@ export default class Week extends Component {
       const response = await api.get(`/adjuncts/${week}`);
       this.setData(response.data);
     } catch (error) {
-      console.tron.log(error);
+      // console.tron.log(error);
     }
   }
 
   componentDidMount = async () => {
-    const subjects = await api.get(`/week-subjects`);
+    const subjects = await api.get('/week-subjects');
     this.fecthDataJson(subjects.data.subject, 'Análise');
     this.fecthDataJson(subjects.data.subject, 'Lazer ativo');
     this.fecthDataJson(subjects.data.subject, 'Vida amorosa');
@@ -164,7 +160,7 @@ export default class Week extends Component {
       label: 5,
       value: 0,
       size: 30,
-      color: `#fff`,
+      color: '#fff',
       selected: true,
     };
 
@@ -172,7 +168,7 @@ export default class Week extends Component {
     const arranalise = this.state.analise;
     const arrlazer = this.state.lazer;
 
-    this.setState(previousState => ({
+    this.setState((previousState) => ({
       amor: [...previousState.amor, json],
       analise: [...previousState.analise, json],
       lazer: [...previousState.lazer, json],
@@ -188,7 +184,7 @@ export default class Week extends Component {
       lazer: arrlazer,
     });
 
-    data.data.map(item => {
+    data.data.map((item) => {
       this.setState({
         disabled: true,
         buttonShow: false,
@@ -199,7 +195,6 @@ export default class Week extends Component {
       if (item.weekSubject.name === 'Análise') {
         this.changeanaliseButton(item.points / 5);
       } else if (item.weekSubject.name === 'Lazer ativo') {
-        console.tron.log(item.weekSubject);
         this.changelazerButton(item.points / 3);
       } else if (item.weekSubject.name === 'Vida amorosa') {
         this.changeamorButton(item.points / 3);
@@ -210,13 +205,13 @@ export default class Week extends Component {
   fecthDataJson(array, name) {
     const arr = [];
 
-    array.map(sub => {
+    array.map((sub) => {
       if (sub.name === name) {
         const point = sub.point.split(',');
         const color = sub.color.split(',');
         const {length} = point;
 
-        point.forEach(function(v, k) {
+        point.forEach(function (v, k) {
           const json = {
             id: sub.id,
             label: v,
@@ -255,7 +250,7 @@ export default class Week extends Component {
 
   async changeamorButton(index) {
     const {amor} = this.state;
-    amor.map(item => {
+    amor.map((item) => {
       item.selected = false;
     });
 
@@ -267,7 +262,7 @@ export default class Week extends Component {
 
   async changeanaliseButton(index) {
     const {analise} = this.state;
-    analise.map(item => {
+    analise.map((item) => {
       item.selected = false;
     });
 
@@ -279,7 +274,7 @@ export default class Week extends Component {
 
   changelazerButton(index) {
     const {lazer} = this.state;
-    lazer.map(item => {
+    lazer.map((item) => {
       item.selected = false;
     });
 
@@ -341,15 +336,15 @@ export default class Week extends Component {
     const standards = await api.get('/week-standard');
 
     const {standard} = standards.data;
-    const analise = standard.filter(function(o) {
+    const analise = standard.filter(function (o) {
       return o.week_subject.name === 'Análise';
     });
 
-    const lazer = standard.filter(function(o) {
+    const lazer = standard.filter(function (o) {
       return o.week_subject.name === 'Lazer ativo';
     });
 
-    const amor = standard.filter(function(o) {
+    const amor = standard.filter(function (o) {
       return o.week_subject.name === 'Vida amorosa';
     });
 

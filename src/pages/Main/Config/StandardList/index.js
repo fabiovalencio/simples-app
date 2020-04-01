@@ -4,11 +4,11 @@ import {ScrollView, StyleSheet} from 'react-native';
 import {Section, TableView, Separator} from 'react-native-tableview-simple';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Orientation from 'react-native-orientation-locker';
-import Background from '../../../../components/Background';
-import {Container, Border} from './styles';
-import CCell from '../../../../components/CCell';
-import api from '../../../../services/api';
 
+import Background from '~/components/Background';
+import CCell from '~/components/CCell';
+import api from '~/services/api';
+import {Container, Border} from './styles';
 const styles = StyleSheet.create({
   table: {
     paddingTop: 75,
@@ -24,7 +24,7 @@ export default class StandardList extends Component {
     const {navigation} = this.props;
     this._willFocusSubscription = navigation.addListener(
       'willFocus',
-      payload => {
+      (payload) => {
         // lock to portrait when this screen is about to appear
         Orientation.lockToPortrait();
       },
@@ -37,10 +37,10 @@ export default class StandardList extends Component {
   }
 
   componentDidMount = async () => {
-    const subjects = await api.get(`/subjects`);
-    const weekSubjects = await api.get(`/week-subjects`);
+    const subjects = await api.get('/subjects');
+    const weekSubjects = await api.get('/week-subjects');
 
-    await new Promise(resolve =>
+    await new Promise((resolve) =>
       this.setState(
         {
           subjects: subjects.data.subject,
@@ -62,17 +62,17 @@ export default class StandardList extends Component {
     let data = null;
 
     if (url.includes('/week-standard')) {
-      data = weekSubjects.filter(obj => {
+      data = weekSubjects.filter((obj) => {
         return obj.id === id;
       });
     }
 
     if (url.includes('/standard')) {
-      data = subjects.filter(obj => {
+      data = subjects.filter((obj) => {
         return obj.id === id;
       });
     }
-    console.tron.log(res.data);
+
     const dataModal = {
       data: data[0],
       standard: res.data.data,

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, Keyboard} from 'react-native';
 import PropTypes from 'prop-types';
 import LinearGradient from 'react-native-linear-gradient';
-import api from '../../../../services/api';
+import api from '~/services/api';
 
 import {
   Container,
@@ -54,7 +54,7 @@ function Standard({data, bg}) {
         `Esses são os seus critérios de ${data.data.name}, você pode alterá-los a qualquer momento.`,
       );
 
-      standard.forEach(function(v) {
+      standard.forEach(function (v) {
         if (v.value === 0) {
           setValue0(v.description);
         } else if (v.value === 1) {
@@ -80,7 +80,7 @@ function Standard({data, bg}) {
 
   const colors = [];
 
-  dcolor.map(v => {
+  dcolor.map((v) => {
     const c = `#${v.trim()}`;
     colors.push(c);
   });
@@ -138,7 +138,7 @@ function Standard({data, bg}) {
     ];
 
     if (isVisible && standard.length === 0) {
-      points.forEach(function(v) {
+      points.forEach(function (v) {
         postData(data.url, data.data.id, value[parseInt(v, 0)], parseInt(v, 0));
       });
 
@@ -148,7 +148,7 @@ function Standard({data, bg}) {
     }
 
     if (standard && standard.length > 0 && isVisible) {
-      standard.forEach(function(v) {
+      standard.forEach(function (v) {
         putData(
           `${data.url}/${v.id}`,
           data.data.id,

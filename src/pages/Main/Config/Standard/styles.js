@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import Button from '../../../../components/Button';
+import Button from '~/components/Button';
 
 export const Container = styled.View`
   padding: 10px 30px 10px 25px;
@@ -53,7 +53,7 @@ export const TInput = styled.TextInput.attrs({
   margin: 10px;
   align-self: flex-end;
   height: 50px;
-  border: ${props => (props.border ? '1px solid #ccc' : 'none')};
+  border: ${(props) => (props.border ? '1px solid #ccc' : 'none')};
 `;
 
 export const SubmitButton = styled(Button)`

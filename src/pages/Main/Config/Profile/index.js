@@ -3,10 +3,10 @@ import {Keyboard} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Background from '../../../../components/Background';
+import Background from '~/components/Background';
 
-import {updateProfileRequest} from '../../../../store/modules/user/actions';
-import {signOut} from '../../../../store/modules/auth/actions';
+import {updateProfileRequest} from '~/store/modules/user/actions';
+import {signOut} from '~/store/modules/auth/actions';
 
 import {
   Container,
@@ -19,8 +19,8 @@ import {
 
 export default function Profile() {
   const dispatch = useDispatch();
-  const profile = useSelector(state => state.user.profile);
-  const loading = useSelector(state => state.auth.loading);
+  const profile = useSelector((state) => state.user.profile);
+  const loading = useSelector((state) => state.auth.loading);
 
   const emailRef = useRef();
   const oldPasswordRef = useRef();

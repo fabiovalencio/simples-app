@@ -1,6 +1,6 @@
 import {Platform} from 'react-native';
 import styled from 'styled-components';
-import Button from '../../../../components/Button';
+import Button from '~/components/Button';
 
 export const Container = styled.KeyboardAvoidingView.attrs({
   enabled: Platform.OS === 'ios',
@@ -54,7 +54,7 @@ export const ViewTextArea = styled.KeyboardAvoidingView.attrs({
 
 export const Text = styled.Text`
   font-size: 15px;
-  color: ${props => (props.color ? props.color : '#00FF40')};
+  color: ${(props) => (props.color ? props.color : '#00FF40')};
   margin: 20px;
   align-self: flex-start;
 `;
@@ -68,7 +68,7 @@ export const TitleView = styled.Text`
 `;
 
 export const Point = styled.View`
-  background: ${props => (props.rgb ? props.rgb : 'rgba(255, 143, 53, 0.3)')};
+  background: ${(props) => (props.rgb ? props.rgb : 'rgba(255, 143, 53, 0.3)')};
   width: 150px;
   height: 150px;
   border-radius: 75px;
@@ -81,7 +81,7 @@ export const PoinText = styled.Text`
   margin: 0;
   padding-top: 20%;
   font-size: 60px;
-  color: ${props => (props.color ? props.color : '#00FF40')};
+  color: ${(props) => (props.color ? props.color : '#00FF40')};
   align-self: center;
   align-content: center;
   font-weight: bold;

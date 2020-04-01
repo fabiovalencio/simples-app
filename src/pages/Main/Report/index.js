@@ -9,10 +9,10 @@ import {LineChart, YAxis, XAxis} from 'react-native-svg-charts';
 import {G, Line, Rect, Text} from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 import Orientation from 'react-native-orientation-locker';
-import api from '../../../services/api';
-import Background from '../../../components/Background';
 
-import rotateDevice from '../../../assets/rotatedevice.gif';
+import api from '~/services/api';
+import Background from '~/components/Background';
+import rotateDevice from '~/assets/rotatedevice.gif';
 
 import {
   Container,
@@ -41,7 +41,7 @@ export default class WeekResult extends Component {
     const {navigation} = this.props;
     this._willFocusSubscription = navigation.addListener(
       'willFocus',
-      payload => {
+      (payload) => {
         // lock to landscape
         Orientation.unlockAllOrientations();
         Orientation.addOrientationListener(this._onOrientationDidChange);
@@ -76,7 +76,7 @@ export default class WeekResult extends Component {
   }
 
   async setData(date, asc = false) {
-    const weeksPoints = await api.get(`/points/weeks`, {
+    const weeksPoints = await api.get('/points/weeks', {
       params: {
         date,
         asc,
@@ -96,11 +96,11 @@ export default class WeekResult extends Component {
     weeks.push(null);
     names.push(null);
 
-    weeksPoints.data.weeks.forEach(function(v) {
+    weeksPoints.data.weeks.forEach(function (v) {
       points.push(v.points);
       names.push(`sem ${v.week}`);
       weeks.push({week: v.week, days: v.days, associations: v.associations});
-      colors.push(null);
+      colors.push('#ccc');
       if (week === v.week) {
         colors.pop();
         colors.push('#3b9eff');
@@ -112,7 +112,7 @@ export default class WeekResult extends Component {
     weeks.push(null);
     names.push(null);
 
-    await new Promise(resolve =>
+    await new Promise((resolve) =>
       this.setState(
         {
           dateFormated,
@@ -131,7 +131,7 @@ export default class WeekResult extends Component {
     );
   }
 
-  _onOrientationDidChange = orientation => {
+  _onOrientationDidChange = (orientation) => {
     const {navigation} = this.props;
     if (orientation !== 'PORTRAIT') {
       navigation.navigate('FullScreen');
@@ -139,12 +139,8 @@ export default class WeekResult extends Component {
   };
 
   formatDate = (date, week) => {
-    const firstDayWeek = moment(date[0])
-      .utc()
-      .format('YYYY-MM-DD');
-    const lastDayWeek = moment(date[1])
-      .utc()
-      .format('YYYY-MM-DD');
+    const firstDayWeek = moment(date[0]).utc().format('YYYY-MM-DD');
+    const lastDayWeek = moment(date[1]).utc().format('YYYY-MM-DD');
 
     return `${format(parseISO(firstDayWeek), "dd'/'MM", {
       locale: pt,
@@ -155,7 +151,7 @@ export default class WeekResult extends Component {
 
   async navigationDayLeft() {
     const {week, weeks, last_day} = this.state;
-    const w = weeks.filter(d => d);
+    const w = weeks.filter((d) => d);
 
     if (w[0].week === week && week > 1) {
       this.setData(last_day);
@@ -170,7 +166,7 @@ export default class WeekResult extends Component {
 
   async navigationDayRight() {
     const {week, weeks, next_day} = this.state;
-    const w = weeks.filter(d => d);
+    const w = weeks.filter((d) => d);
 
     w.map((item, k) => {
       if (item.week === week + 1) {
@@ -190,7 +186,7 @@ export default class WeekResult extends Component {
     let dateFormated = null;
     const {weekC, weeks} = this.state;
     weekC.map((item, k) => {
-      item = null;
+      item = '#ccc';
       if (i === k) {
         item = '#3b9eff';
         const {associations, days, week} = weeks[i + 1];
@@ -224,23 +220,23 @@ export default class WeekResult extends Component {
     const label = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
     const Tooltip = ({x, y, data}) => {
-      data = data.filter(d => d);
+      data = data.filter((d) => d);
 
       return data.map((value, index) => (
         <G
-          x={x(index + 1) - 75 / 2}
+          x={x(index + 1) - 80 / 2}
           key={index.toString()}
           onPress={() => this.toolTipHandler(index)}>
           <G>
             <Rect
-              height={40}
-              width={40}
+              height={30}
+              width={30}
               stroke={weekC[index]}
               fill="white"
-              ry={20}
-              rx={20}
-              x={19.5}
-              y={y(value) - 19.5}
+              ry={15}
+              rx={15}
+              x={24.5}
+              y={y(value) - 15}
             />
             <Text
               x={39}
@@ -258,7 +254,7 @@ export default class WeekResult extends Component {
     const CustomGrid = ({x, y, data, ticks}) => (
       <G>
         {// Horizontal grid
-        ticks.map(tick => (
+        ticks.map((tick) => (
           <Line
             key={tick}
             x1="0%"
@@ -324,7 +320,9 @@ export default class WeekResult extends Component {
             <XAxis
               style={styles.xaxis}
               data={weekData}
-              formatLabel={index => (names[index] !== null ? names[index] : '')}
+              formatLabel={(index) =>
+                names[index] !== null ? names[index] : ''
+              }
               contentInset={{left: 15, right: 15}}
               svg={{fontSize: 10, fill: 'white'}}
             />

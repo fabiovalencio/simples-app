@@ -18,10 +18,10 @@ import pt from 'date-fns/locale/pt';
 import CalendarPicker from 'react-native-calendar-picker';
 import OneSignal from 'react-native-onesignal';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import Standard from '../../Config/Standard';
-import RadioButton from '../../../../components/RadioButton';
-import api from '../../../../services/api';
-import Background from '../../../../components/Background';
+import Standard from '~/Config/Standard';
+import RadioButton from '~/components/RadioButton';
+import api from '~/services/api';
+import Background from '~/components/Background';
 
 import {
   Container,
@@ -54,7 +54,7 @@ export default class SelectDay extends Component {
     const {navigation} = this.props;
     this._willFocusSubscription = navigation.addListener(
       'willFocus',
-      payload => {
+      (payload) => {
         // lock to portrait when this screen is about to appear
         Orientation.lockToPortrait();
       },
@@ -90,7 +90,7 @@ export default class SelectDay extends Component {
       dataModal: null,
     };
 
-    OneSignal.getPermissionSubscriptionState(async status => {
+    OneSignal.getPermissionSubscriptionState(async (status) => {
       let notification = await AsyncStorage.getItem('notification');
       notification = !!notification;
 
@@ -118,7 +118,7 @@ export default class SelectDay extends Component {
 
     this.setState({dateFormated: formatted});
 
-    const subjects = await api.get(`/subjects`);
+    const subjects = await api.get('/subjects');
 
     this.fecthDataJson(subjects.data.subject, 'Sono');
     this.fecthDataJson(subjects.data.subject, 'Alimentação');
@@ -166,26 +166,24 @@ export default class SelectDay extends Component {
     const users = JSON.parse(simples.user);
 
     if (users.profile) {
-      await new Promise(resolve =>
+      await new Promise((resolve) =>
         this.setState({user: users.profile}, () => resolve()),
       );
     }
 
     if (!user.name) {
-      const userData = await api.get(`/user`);
-      await new Promise(resolve =>
+      const userData = await api.get('/user');
+      await new Promise((resolve) =>
         this.setState({user: userData.data.user}, () => resolve()),
       );
     }
 
-    const week = await api.get(`/user-week-days`, {
+    const week = await api.get('/user-week-days', {
       params: {
         date,
       },
     });
-    const minDate = moment(week.data.week[0])
-      .utc()
-      .format('YYYY-MM-DD');
+    const minDate = moment(week.data.week[0]).utc().format('YYYY-MM-DD');
     this.state.minDate = minDate;
   }
 
@@ -204,7 +202,7 @@ export default class SelectDay extends Component {
       label: 5,
       value: 0,
       size: 30,
-      color: `#fff`,
+      color: '#fff',
       selected: true,
     };
     const {sono, alimentacao, meditacao} = this.state;
@@ -212,7 +210,7 @@ export default class SelectDay extends Component {
     const arrAlimentacao = alimentacao;
     const arrMeditacao = meditacao;
 
-    this.setState(previousState => ({
+    this.setState((previousState) => ({
       sono: [...previousState.sono, json],
       alimentacao: [...previousState.alimentacao, json],
       meditacao: [...previousState.meditacao, json],
@@ -229,7 +227,7 @@ export default class SelectDay extends Component {
     });
 
     if (data) {
-      data.map(item => {
+      data.map((item) => {
         this.setState({
           disabled: true,
           buttonShow: false,
@@ -273,13 +271,13 @@ export default class SelectDay extends Component {
     this.setState({date, dateFormated: formatted, display: 'none'});
 
     try {
-      const notes = await api.get(`/notes`, {
+      const notes = await api.get('/notes', {
         params: {
           date,
         },
       });
 
-      const workout = await api.get(`/workout`, {
+      const workout = await api.get('/workout', {
         params: {
           date,
         },
@@ -293,20 +291,20 @@ export default class SelectDay extends Component {
         this.setDataWorkout(workout.data);
       }
     } catch (error) {
-      console.tron.log(error);
+      // console.tron.log(error);
     }
   }
 
   fecthDataJson(array, name) {
     const arr = [];
 
-    array.map(sub => {
+    array.map((sub) => {
       if (sub.name === name) {
         const point = sub.point.split(',');
         const color = sub.color.split(',');
         const {length} = point;
 
-        point.forEach(function(v, k) {
+        point.forEach(function (v, k) {
           const json = {
             id: sub.id,
             label: v,
@@ -350,7 +348,7 @@ export default class SelectDay extends Component {
 
   changeSonoButton(index) {
     const {sono} = this.state;
-    sono.map(item => {
+    sono.map((item) => {
       item.selected = false;
     });
 
@@ -363,7 +361,7 @@ export default class SelectDay extends Component {
 
   changeAlimentacaoButton(index) {
     const {alimentacao} = this.state;
-    alimentacao.map(item => {
+    alimentacao.map((item) => {
       item.selected = false;
     });
 
@@ -375,7 +373,7 @@ export default class SelectDay extends Component {
 
   changeMeditacaoButton(index) {
     const {meditacao} = this.state;
-    meditacao.map(item => {
+    meditacao.map((item) => {
       item.selected = false;
     });
 
@@ -459,15 +457,15 @@ export default class SelectDay extends Component {
     const standards = await api.get('/standard');
 
     const {standard} = standards.data;
-    const sono = standard.filter(function(o) {
+    const sono = standard.filter(function (o) {
       return o.subject.name === 'Sono';
     });
 
-    const alimentacao = standard.filter(function(o) {
+    const alimentacao = standard.filter(function (o) {
       return o.subject.name === 'Alimentação';
     });
 
-    const meditacao = standard.filter(function(o) {
+    const meditacao = standard.filter(function (o) {
       return o.subject.name === 'Meditação';
     });
 
@@ -677,7 +675,7 @@ export default class SelectDay extends Component {
 
               <ButtonName>Exercício</ButtonName>
               <RadioForm
-                ref={child => {
+                ref={(child) => {
                   this.child = child;
                 }}
                 {...this.props}

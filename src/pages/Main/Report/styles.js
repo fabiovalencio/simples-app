@@ -98,4 +98,5 @@ export const Stretch = styled.Image`
   right: 0;
   width: 30px;
   height: 30px;
+  background: transparent;
 `;

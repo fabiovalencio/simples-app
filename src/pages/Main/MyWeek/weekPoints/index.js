@@ -2,8 +2,8 @@ import React, {useState, useEffect, useRef} from 'react';
 import {Keyboard, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
-import Background from '../../../../components/Background';
-import api from '../../../../services/api';
+import Background from '~/components/Background';
+import api from '~/services/api';
 
 import {
   Container,
@@ -66,8 +66,6 @@ export default function weekPoints({navigation}) {
   }, [level, navigation, points]);
 
   async function handleSubmit() {
-    console.tron.log(positive);
-
     if (positive && negative) {
       await api.post('/associations', {
         positive,
@@ -103,7 +101,7 @@ export default function weekPoints({navigation}) {
             numberOfLines={3}
             returnKeyType="next"
             onSubmitEditing={() => negativeRef.current.focus()}
-            onChangeText={text => setPositive(text)}
+            onChangeText={(text) => setPositive(text)}
             value={positive}
             placeholder="Associações positivas da semana"
             style={{
@@ -129,7 +127,7 @@ export default function weekPoints({navigation}) {
             ref={negativeRef}
             returnKeyType="send"
             onSubmitEditing={handleSubmit}
-            onChangeText={text => setNegative(text)}
+            onChangeText={(text) => setNegative(text)}
             value={negative}
             placeholder="Associações negativas da semana"
             style={{
