@@ -74,6 +74,10 @@ export default function SignIn({navigation}) {
             Acessar
           </SubmitButton>
 
+          <SignLink onPress={() => navigation.navigate('Reset')}>
+            <SignLinkText>Esqueci a senha</SignLinkText>
+          </SignLink>
+
           <SignLink onPress={() => navigation.navigate('SignUp')}>
             <SignLinkText>Criar conta gratuita</SignLinkText>
           </SignLink>

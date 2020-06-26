@@ -1,9 +1,19 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Keyboard} from 'react-native';
+import {
+  StyleSheet,
+  Keyboard,
+  ScrollView,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
+  Button,
+} from 'react-native';
 import PropTypes from 'prop-types';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Modal from 'react-native-modal';
 import LinearGradient from 'react-native-linear-gradient';
 import api from '~/services/api';
-
+import * as json from './text.json';
 import {
   Container,
   Title,
@@ -13,6 +23,10 @@ import {
   VTitle,
   TInput,
   SubmitButton,
+  Text,
+  ViewModal,
+  ButtonName,
+  ButtonClose,
 } from './styles';
 
 const styles = StyleSheet.create({
@@ -36,6 +50,7 @@ function Standard({data, bg}) {
   );
   const [title, setTitle] = useState('Salvar');
   const [isVisible, setIsVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [value0, setValue0] = useState();
   const [value1, setValue1] = useState();
@@ -163,8 +178,35 @@ function Standard({data, bg}) {
     }
   }
 
+  function toggleModal() {
+    setIsModalVisible(!isModalVisible);
+  }
+
   return (
     <Container>
+      <ButtonName>
+        <Icon name="info" size={20} color="#333" onPress={toggleModal} />
+      </ButtonName>
+      <Modal isVisible={isModalVisible} onPress={toggleModal}>
+        <KeyboardAvoidingView
+          enabled
+          behavior={Platform.OS === 'android' ? undefined : 'position'}>
+          <ScrollView scrollEnabled={false} keyboardShouldPersistTaps="handled">
+            <ViewModal>
+              <ButtonClose>
+                <Icon
+                  name="close"
+                  size={20}
+                  color="#333"
+                  onPress={toggleModal}
+                />
+              </ButtonClose>
+              <Text>{json[data.data.name]}</Text>
+            </ViewModal>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Modal>
+
       <Title>Critérios de {data.data.name}</Title>
       <SubTitle>{phrase}</SubTitle>
 

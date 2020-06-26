@@ -7,6 +7,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import SignIn from '~/pages/SignIn';
 import SignUp from '~/pages/SignUp';
+import Reset from '~/pages/Reset';
+import Verify from '~/pages/Reset/Verify';
+import Password from '~/pages/Reset/Password';
 
 import SelectDay from '~/pages/Main/MyDay/SelectDay';
 import Week from '~/pages/Main/MyWeek/Week';
@@ -27,6 +30,9 @@ export default (isSigned = false) =>
         Sign: createSwitchNavigator({
           SignIn,
           SignUp,
+          Reset,
+          Verify,
+          Password,
         }),
         App: createBottomTabNavigator(
           {
@@ -39,7 +45,7 @@ export default (isSigned = false) =>
                 {
                   defaultNavigationOptions: {
                     headerTransparent: true,
-                    headerTintColor: '#3b5998',
+                    headerTintColor: '#3b9eff',
                     headerLeftContainerStyle: {
                       marginLeft: 20,
                     },
@@ -62,7 +68,7 @@ export default (isSigned = false) =>
                 {
                   defaultNavigationOptions: {
                     headerTransparent: true,
-                    headerTintColor: '#3b5998',
+                    headerTintColor: '#3b9eff',
                     headerLeftContainerStyle: {
                       marginLeft: 20,
                     },
@@ -85,7 +91,7 @@ export default (isSigned = false) =>
                 {
                   defaultNavigationOptions: {
                     headerTransparent: true,
-                    headerTintColor: '#3b5998',
+                    headerTintColor: '#3b9eff',
                     headerLeftContainerStyle: {
                       marginLeft: 20,
                     },
@@ -112,7 +118,7 @@ export default (isSigned = false) =>
                 {
                   defaultNavigationOptions: {
                     headerTransparent: true,
-                    headerTintColor: '#3b5998',
+                    headerTintColor: '#3b9eff',
                     headerLeftContainerStyle: {
                       marginLeft: 20,
                     },
@@ -120,7 +126,7 @@ export default (isSigned = false) =>
                 },
               ),
               navigationOptions: {
-                tabBarLabel: 'Configuração',
+                tabBarLabel: 'Configurações',
                 tabBarIcon: ({tintColor}) => (
                   <Icon name="person" size={20} color={tintColor} />
                 ),
@@ -130,7 +136,7 @@ export default (isSigned = false) =>
           {
             tabBarOptions: {
               keyboardHidesTabBar: true,
-              activeTintColor: '#3b5998',
+              activeTintColor: '#3b9eff',
               inactiveTintColor: 'rgba(59, 89, 152, 0.6)',
               style: {
                 backgroundColor: '#FFF',

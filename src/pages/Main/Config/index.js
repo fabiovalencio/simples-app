@@ -68,10 +68,12 @@ export default function Config({navigation}) {
         });
 
         OneSignal.setSubscription(true);
-        const day = user.day ? user.day.toString() : null;
-        OneSignal.setExternalUserId(user.id);
-        OneSignal.setEmail(user.email);
-        OneSignal.sendTag('day', day);
+        const day = user.day ? user.day.toString() : 1;
+        setTimeout(function () {
+          OneSignal.setExternalUserId(user.id);
+          OneSignal.setEmail(user.email);
+          OneSignal.sendTag('day', day);
+        }, 1000);
       }
     });
     toggleSwitch();
@@ -81,7 +83,8 @@ export default function Config({navigation}) {
     table: {
       paddingTop: 50,
       paddingBottom: 20,
-      margin: 30,
+      margin: 10,
+      marginTop: 30,
       borderRadius: 8,
     },
   });

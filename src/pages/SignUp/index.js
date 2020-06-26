@@ -1,9 +1,9 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, Fragment} from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import {Keyboard, StyleSheet} from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -46,9 +46,9 @@ export default function SignUp({navigation}) {
   const emailRef = useRef();
   const loading = useSelector((state) => state.auth.loading);
 
-  async function changeDate(event, date) {
-    setDateFormatted(format(date, "dd 'de' MMM 'de' yyyy", {locale: pt}));
-    setDate(date);
+  async function changeDate(event, dt) {
+    setDateFormatted(format(dt, "dd 'de' MMM 'de' yyyy", {locale: pt}));
+    setDate(dt);
   }
 
   useEffect(() => {
@@ -59,25 +59,27 @@ export default function SignUp({navigation}) {
       const resGenders = await api.get('genders');
       setGenders(resGenders.data);
     }
+
     loadData();
   }, []);
 
-  async function handleState(id) {
-    const response = await api.get(`cities/${id}/state`);
-
+  async function handleState(obj) {
+    const response = await api.get(`cities/${obj.id}/state`);
     setCities(response.data);
   }
 
-  function changeCity(city) {
-    setCity(city);
+  function changeCity(obj) {
+    let id = obj.id.toString();
+    setCity(id);
   }
-  function changeGender(gender) {
-    setGender(gender);
+  function changeGender(obj) {
+    let id = obj.id;
+    setGender(id);
   }
 
   function handleSubmit() {
-    Keyboard.dismiss();
     dispatch(signUpRequest(name, email, password, city, gender, date));
+    Keyboard.dismiss();
   }
 
   return (
@@ -126,7 +128,13 @@ export default function SignUp({navigation}) {
           <DateButton onPress={() => setOpened(!opened)}>
             <Icon name="event" color="#3b5998" size={20} />
             <DateText>
-              {dateFormatted || 'Selecione a sua data de nascimento'}
+              {dateFormatted
+                ? opened
+                  ? 'Clique para selecionar'
+                  : dateFormatted
+                : opened
+                ? 'Clique para selecionar'
+                : 'Selecione a sua data de nascimento'}
             </DateText>
           </DateButton>
 
@@ -137,42 +145,62 @@ export default function SignUp({navigation}) {
                 onChange={changeDate}
                 locale="pt"
                 mode="date"
-                placeholder="Selecione a data doseu nascimento"
+                placeholder="Selecione sua data de nascimento"
                 confirmBtnText="Confirm"
+                textColor="#3b5998"
               />
             </Picker>
           )}
-          <RNPickerSelect
-            placeholder={{
-              label: 'Selecione o seu estado',
+
+          <SearchableDropdown
+            textInputStyle={pickerSelectStyles.input}
+            onItemSelect={(id) => handleState(id)}
+            items={states.states}
+            itemStyle={pickerSelectStyles.textInput}
+            resetValue={false}
+            textInputProps={{
+              placeholder: 'Estado (digite para buscar)',
+              placeholderTextColor: 'rgba(59, 89, 152, 0.8)',
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
               color: '#3b5998',
+              onTextChange: (id) => handleState(id),
             }}
-            // Icon={() => {
-            //   return <Icon name="event" size={20} color="#3b5998" />;
-            // }}
-            style={pickerSelectStyles}
-            onValueChange={(value) => handleState(value)}
-            items={states.states ? states.states : {}}
+            itemsContainerStyle={{maxHeight: 130}}
           />
 
-          <RNPickerSelect
-            placeholder={{
-              label: 'Selecione a sua cidade',
+          <SearchableDropdown
+            textInputStyle={pickerSelectStyles.input}
+            onItemSelect={(value) => changeCity(value)}
+            items={cities.cities}
+            itemStyle={pickerSelectStyles.textInput}
+            resetValue={false}
+            textInputProps={{
+              placeholder: 'Cidade (digite para buscar)',
+              placeholderTextColor: 'rgba(59, 89, 152, 0.8)',
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
               color: '#3b5998',
+              onItemSelect: (value) => changeCity(value),
             }}
-            style={pickerSelectStyles}
-            onValueChange={(value) => changeCity(value)}
-            items={cities.cities ? cities.cities : {}}
+            itemsContainerStyle={{maxHeight: 130}}
           />
 
-          <RNPickerSelect
-            placeholder={{
-              label: 'Selecione o seu gênero',
+          <SearchableDropdown
+            textInputStyle={pickerSelectStyles.input}
+            onItemSelect={(value) => changeGender(value)}
+            items={genders.genders}
+            itemStyle={pickerSelectStyles.textInput}
+            resetValue={false}
+            textInputProps={{
+              placeholder: 'Gênero (digite para buscar)',
+              placeholderTextColor: 'rgba(59, 89, 152, 0.8)',
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
               color: '#3b5998',
+              onItemSelect: (value) => changeGender(value),
             }}
-            style={pickerSelectStyles}
-            onValueChange={(value) => changeGender(value)}
-            items={genders.genders ? genders.genders : {}}
+            itemsContainerStyle={{
+              maxHeight: 130,
+              color: '#fff',
+            }}
           />
 
           <SubmitButton loading={loading} onPress={handleSubmit}>
@@ -189,26 +217,25 @@ export default function SignUp({navigation}) {
 }
 
 const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
+  input: {
+    fontSize: 15,
+    color: '#3b5998',
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: '#ccc',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderRadius: 4,
-    color: '#3b5998',
     marginBottom: 5,
     paddingRight: 30, // to ensure the text is never behind the icon
   },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
+  textInput: {
+    padding: 10,
+    marginTop: 2,
     color: '#3b5998',
-    marginBottom: 5,
-    paddingRight: 100, // to ensure the text is never behind the icon
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: '#bbb',
+    borderWidth: 1,
+    borderRadius: 5,
   },
 });

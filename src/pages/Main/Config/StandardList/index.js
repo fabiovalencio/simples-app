@@ -1,19 +1,33 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {ScrollView, StyleSheet} from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import {Section, TableView, Separator} from 'react-native-tableview-simple';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Orientation from 'react-native-orientation-locker';
-
+import Modal from 'react-native-modal';
 import Background from '~/components/Background';
 import CCell from '~/components/CCell';
 import api from '~/services/api';
-import {Container, Border} from './styles';
+import {
+  Container,
+  Border,
+  Text,
+  ViewModal,
+  ButtonName,
+  ButtonClose,
+} from './styles';
+
 const styles = StyleSheet.create({
   table: {
-    paddingTop: 75,
+    paddingTop: 100,
     paddingBottom: 20,
-    margin: 30,
+    margin: 10,
+    marginTop: 30,
     borderRadius: 8,
   },
 });
@@ -31,6 +45,7 @@ export default class StandardList extends Component {
     );
 
     this.state = {
+      isModalVisible: false,
       subjects: [],
       weekSubjects: [],
     };
@@ -83,11 +98,62 @@ export default class StandardList extends Component {
     navigation.navigate('standardView', {dataModal});
   }
 
+  toggleModal = () => {
+    const {isModalVisible} = this.state;
+    this.setState({isModalVisible: !isModalVisible});
+  };
+
   render() {
-    const {subjects, weekSubjects} = this.state;
+    const {subjects, weekSubjects, isModalVisible} = this.state;
     return (
       <Background>
         <Container>
+          <ButtonName>
+            <Icon
+              name="info"
+              size={20}
+              color="#333"
+              onPress={this.toggleModal}
+            />
+          </ButtonName>
+          <Modal isVisible={isModalVisible} onPress={this.toggleModal}>
+            <KeyboardAvoidingView
+              enabled
+              behavior={Platform.OS === 'android' ? undefined : 'position'}>
+              <ScrollView
+                scrollEnabled={false}
+                keyboardShouldPersistTaps="handled">
+                <ViewModal>
+                  <ButtonClose>
+                    <Icon
+                      name="close"
+                      size={20}
+                      color="#333"
+                      onPress={this.toggleModal}
+                    />
+                  </ButtonClose>
+                  <Text>
+                    Nós do +Simples sabemos que todo mundo quer que a gente
+                    defina os critérios do jogo para cada uma das 7 dimensões!
+                    {'\n'}
+                    {'\n'}
+                    Mas é aqui que mora a beleza desse jogo: quem pode dizer o
+                    que é melhor para você, é você! É justamente porque nós não
+                    vamos dizer como é que tem que ser o seu sono, sua
+                    alimentação, seus exercícios físicos, etc., que você tem
+                    maior probabilidade de jogar esse jogo para sempre e
+                    conquistar o bem-estar definitivo para sua vida!
+                    {'\n'}
+                    {'\n'}
+                    Você não precisa mudar nada na sua vida para começar a
+                    jogar: para cada uma das dimensões, decida qual vai ser o
+                    seu critério de uma forma criativa.
+                  </Text>
+                </ViewModal>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </Modal>
+
           <ScrollView
             contentContainerStyle={styles.table}
             scrollEnabled={false}>

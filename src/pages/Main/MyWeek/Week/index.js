@@ -7,7 +7,6 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import CalendarPicker from 'react-native-calendar-picker';
 import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -19,12 +18,11 @@ import RadioButton from '~/components/RadioButton';
 import api from '~/services/api';
 import Background from '~/components/Background';
 import Standard from '~/pages/Main/Config/Standard';
+import DayChart from '~/components/DayChart';
 
 import {
   Container,
   ContainerRadio,
-  View,
-  DateButton,
   DateText,
   List,
   ButtonName,
@@ -33,16 +31,19 @@ import {
   TotalText,
   TotalValue,
   SubmitButton,
-  ViewPoint,
+  MainView,
   HelloName,
   Name,
+  ViewModal,
 } from './styles';
 
-const propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }),
-};
+import {View, LeftButton, RightButton, DateButton} from '../../Report/styles';
+
+// const propTypes = {
+//   navigation: PropTypes.shape({
+//     navigate: PropTypes.func,
+//   }),
+// };
 
 export default class Week extends Component {
   constructor(props) {
@@ -69,6 +70,9 @@ export default class Week extends Component {
       amorValue: null,
       analiseValue: null,
       lazerValue: null,
+      weekAmor: [],
+      weekAnalise: [],
+      weekLazer: [],
       total: 0,
       buttonShow: false,
       disabled: false,
@@ -82,19 +86,14 @@ export default class Week extends Component {
       dataModal: null,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.navigationDayLeft = this.navigationDayLeft.bind(this);
+    this.navigationDayRight = this.navigationDayRight.bind(this);
   }
 
-  async getUserData() {
-    const {date} = this.state;
-    const res = await api.get('/user-last-week', {
-      params: {
-        date,
-      },
-    });
+  async getUserData(days, week) {
+    const firstDayWeek = moment(days[0]).utc().format('YYYY-MM-DD');
+    const lastDayWeek = moment(days[1]).utc().format('YYYY-MM-DD');
 
-    const firstDayWeek = moment(res.data.week[0]).utc().format('YYYY-MM-DD');
-    const lastDayWeek = moment(res.data.week[1]).utc().format('YYYY-MM-DD');
-    const week = res.data.week_number;
     // const userWeekDay = res.data.week_day;
     const dateFormated = `${format(parseISO(firstDayWeek), "dd'/'MM", {
       locale: pt,
@@ -121,12 +120,60 @@ export default class Week extends Component {
     } catch (error) {}
   }
 
+  setDataWeek = (name, data) => {
+    if (name === 'Análise') {
+      this.setState({weekAnalise: data});
+    } else if (name === 'Lazer ativo') {
+      this.setState({weekLazer: data});
+    } else if (name === 'Vida amorosa') {
+      this.setState({weekAmor: data});
+    }
+  };
+
+  getWeeksAdjunctData = async (adjunct) => {
+    const that = this;
+    const {week} = this.state;
+    let colors = [];
+    let dates = [];
+    let points = [];
+    let arr = [];
+
+    let res = await api.get(`week/${week}/adjunct/${adjunct.id}`);
+
+    res.data.data.forEach(async function (n, i) {
+      let p = n.points === 0 ? 0.01 : n.points;
+      points.push(p);
+
+      let d = n.week;
+      dates.push(`sem ${d}`);
+    });
+    colors = adjunct.color.split(',');
+
+    const json = {
+      points,
+      dates,
+      colors,
+      key: adjunct.name + week,
+    };
+    arr.push(json);
+
+    that.setDataWeek(adjunct.name, arr[0]);
+  };
+
   componentDidMount = async () => {
+    const {date} = this.state;
     const subjects = await api.get('/week-subjects');
     this.fecthDataJson(subjects.data.subject, 'Análise');
     this.fecthDataJson(subjects.data.subject, 'Lazer ativo');
     this.fecthDataJson(subjects.data.subject, 'Vida amorosa');
-    await this.getUserData();
+
+    const res = await api.get('/user-last-week', {
+      params: {
+        date,
+      },
+    });
+
+    await this.getUserData(res.data.week, res.data.week_number);
     const persist = await AsyncStorage.getItem('persist:simples');
     const simples = JSON.parse(persist);
     const users = JSON.parse(simples.user);
@@ -182,22 +229,27 @@ export default class Week extends Component {
       lazer: arrlazer,
     });
 
-    data.data.map((item) => {
-      this.setState({
-        disabled: true,
-        buttonShow: false,
-        dataFromApi: true,
-        phrase: 'veja como foi a sua semana.',
-      });
+    if (data.data) {
+      data.data.map((item) => {
+        this.setState({
+          disabled: true,
+          buttonShow: false,
+          dataFromApi: !item.points ? false : true,
+          phrase: 'veja como foi a sua semana.',
+        });
 
-      if (item.weekSubject.name === 'Análise') {
-        this.changeanaliseButton(item.points / 5);
-      } else if (item.weekSubject.name === 'Lazer ativo') {
-        this.changelazerButton(item.points / 3);
-      } else if (item.weekSubject.name === 'Vida amorosa') {
-        this.changeamorButton(item.points / 3);
-      }
-    });
+        if (item.weekSubject.name === 'Análise') {
+          this.changeanaliseButton(Math.round(item.points / 5));
+          this.getWeeksAdjunctData(this.state.dataAnalise);
+        } else if (item.weekSubject.name === 'Lazer ativo') {
+          this.changelazerButton(Math.round(item.points / 3));
+          this.getWeeksAdjunctData(this.state.dataLazer);
+        } else if (item.weekSubject.name === 'Vida amorosa') {
+          this.changeamorButton(Math.round(item.points / 3));
+          this.getWeeksAdjunctData(this.state.dataAmor);
+        }
+      });
+    }
   }
 
   fecthDataJson(array, name) {
@@ -239,8 +291,7 @@ export default class Week extends Component {
     if (
       this.state.amorValue > 0 &&
       this.state.analiseValue >= 0 &&
-      this.state.lazerValue > 0 &&
-      !this.state.dataFromApi
+      this.state.lazerValue > 0
     ) {
       this.state.buttonShow = true;
     }
@@ -270,7 +321,7 @@ export default class Week extends Component {
     this.changeButtonState();
   }
 
-  changelazerButton(index) {
+  async changelazerButton(index) {
     const {lazer} = this.state;
     lazer.map((item) => {
       item.selected = false;
@@ -381,12 +432,35 @@ export default class Week extends Component {
     this.setState({isModalVisible: !isModalVisible});
   }
 
+  async navigationDayLeft() {
+    const {week} = this.state;
+    if (week === 1) {
+      return;
+    }
+    const res = await api.get(`/user-days-week/${week - 1}`);
+    this.setData({week: week - 1});
+    await this.getUserData(res.data.days, week - 1);
+  }
+
+  async navigationDayRight() {
+    const {week} = this.state;
+
+    const today = new Date();
+    const current_week = await api.get('/user-week-number', {
+      date: today,
+    });
+    if (week === current_week.data.week - 1) {
+      return;
+    }
+
+    const res = await api.get(`/user-days-week/${week + 1}`);
+    this.setData({week: week + 1});
+    await this.getUserData(res.data.days, week + 1);
+  }
+
   render() {
     const {
-      display,
       dateFormated,
-      firstDayWeek,
-      lastDayWeek,
       user,
       phrase,
       analise,
@@ -397,6 +471,9 @@ export default class Week extends Component {
       buttonShow,
       dataModal,
       isModalVisible,
+      weekAnalise,
+      weekAmor,
+      weekLazer,
     } = this.state;
     return (
       <>
@@ -409,7 +486,7 @@ export default class Week extends Component {
             }}
             customBackdrop={
               <TouchableWithoutFeedback onPress={this.onButtonPress}>
-                <View
+                <ViewModal
                   style={{
                     flex: 1,
                     marginTop: -10,
@@ -424,10 +501,10 @@ export default class Week extends Component {
               <ScrollView
                 scrollEnabled={false}
                 keyboardShouldPersistTaps="handled">
-                <View style={{flex: 1}}>
+                <ViewModal style={{flex: 1}}>
                   <Button title="X" onPress={this.onButtonPress} />
                   <Standard data={dataModal} onPress={this.handleSubmit} />
-                </View>
+                </ViewModal>
               </ScrollView>
             </KeyboardAvoidingView>
           </Modal>
@@ -436,133 +513,133 @@ export default class Week extends Component {
           {/* {dateFormated ? ( */}
           <Container>
             <View>
-              <DateButton
-                onPress={() => {
-                  this.setState({
-                    display: display === 'none' ? 'flex' : 'none',
-                  });
-                }}>
-                <Icon name="event" color="#3b9eff" size={20} />
+              <LeftButton onPress={this.navigationDayLeft}>
+                <Icon name="chevron-left" color="#3b9eff" size={20} />
+              </LeftButton>
+              <DateButton activeOpacity={1}>
+                {/* <Icon name="event" color="#3b9eff" size={20} /> */}
                 <DateText>{dateFormated}</DateText>
               </DateButton>
+              <RightButton onPress={this.navigationDayRight}>
+                <Icon name="chevron-right" color="#3b9eff" size={20} />
+              </RightButton>
             </View>
 
-            {firstDayWeek ? (
-              <ViewPoint display={display}>
-                <CalendarPicker
-                  allowRangeSelection
-                  selectedDayColor="#ccc"
-                  minDate={firstDayWeek}
-                  maxDate={lastDayWeek}
-                  weekdays={['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']}
-                  months={[
-                    'Janeiro',
-                    'Fevereiro',
-                    'Março',
-                    'Abril',
-                    'Maio',
-                    'Junho',
-                    'Julho',
-                    'Agosto',
-                    'Setembro',
-                    'Outubro',
-                    'Novembro',
-                    'Dezembro',
-                  ]}
-                  previousTitle=" "
-                  nextTitle=" "
-                  selectedStartDate={firstDayWeek}
-                  selectedEndDate={lastDayWeek}
-                  scaleFactor={450}
-                  enableDateChange={false}
-                  restrictMonthNavigation
-                  enableSwipe={false}
-                />
-              </ViewPoint>
-            ) : null}
+            <MainView>
+              <List>
+                <Name>
+                  <HelloName>Olá {user.name},</HelloName>
+                  {'\n'} {'\n'} {phrase}
+                </Name>
 
-            <List>
-              <Name>
-                <HelloName>Olá {user.name},</HelloName>
-                {'\n'} {'\n'} {phrase}
-              </Name>
-
-              <ButtonName>
-                Análise
-                <Icon
-                  name="help"
-                  size={20}
-                  style={{marginLeft: 20, marginTop: 10}}
-                  color="#333"
-                  onPress={this.toggleModal.bind(this, 'analise')}
-                />
-              </ButtonName>
-              <ContainerRadio>
-                {analise.map((item, key) => (
-                  <RadioButton
-                    disabled={disabled}
-                    key={key}
-                    button={item}
-                    onClick={this.changeanaliseButton.bind(this, key)}
+                <ButtonName>
+                  Análise
+                  <Icon
+                    name="help"
+                    size={20}
+                    style={{marginLeft: 20, marginTop: 10}}
+                    color="#333"
+                    onPress={this.toggleModal.bind(this, 'analise')}
                   />
-                ))}
-              </ContainerRadio>
+                </ButtonName>
+                <ContainerRadio>
+                  {analise.map((item, key) => (
+                    <RadioButton
+                      disabled={disabled}
+                      key={key}
+                      button={item}
+                      onClick={this.changeanaliseButton.bind(this, key)}
+                    />
+                  ))}
+                </ContainerRadio>
 
-              <Separator>__ _ __</Separator>
-
-              <ButtonName>
-                lazer ativo
-                <Icon
-                  name="help"
-                  size={20}
-                  defaultStyle={{marginLeft: 20, marginTop: 10}}
-                  color="#333"
-                  onPress={this.toggleModal.bind(this, 'lazer')}
-                />
-              </ButtonName>
-              <ContainerRadio>
-                {lazer.map((item, key) => (
-                  <RadioButton
-                    disabled={disabled}
-                    key={key}
-                    button={item}
-                    onClick={this.changelazerButton.bind(this, key)}
+                {weekAnalise && weekAnalise.points && (
+                  <DayChart
+                    key={weekAnalise.key}
+                    days={weekAnalise.dates}
+                    points={weekAnalise.points}
+                    colors={weekAnalise.colors}
+                    fator={5}
+                    max={12}
                   />
-                ))}
-              </ContainerRadio>
+                )}
 
-              <Separator>__ _ __</Separator>
-
-              <ButtonName>
-                Vida Amorosa
-                <Icon
-                  name="help"
-                  size={20}
-                  iconStyle={{marginLeft: 20, marginTop: 10}}
-                  color="#333"
-                  onPress={this.toggleModal.bind(this, 'amor')}
-                />
-              </ButtonName>
-              <ContainerRadio>
-                {amor.map((item, key) => (
-                  <RadioButton
-                    disabled={disabled}
-                    key={key}
-                    button={item}
-                    onClick={this.changeamorButton.bind(this, key)}
+                <ButtonName>
+                  Lazer ativo
+                  <Icon
+                    name="help"
+                    size={20}
+                    defaultStyle={{marginLeft: 20, marginTop: 10}}
+                    color="#333"
+                    onPress={this.toggleModal.bind(this, 'lazer')}
                   />
-                ))}
-              </ContainerRadio>
+                </ButtonName>
+                <ContainerRadio>
+                  {lazer.map((item, key) => (
+                    <RadioButton
+                      disabled={disabled}
+                      key={key}
+                      button={item}
+                      onClick={this.changelazerButton.bind(this, key)}
+                    />
+                  ))}
+                </ContainerRadio>
 
-              <Total>
-                <TotalText>Total</TotalText>
-                <TotalValue>{total}</TotalValue>
-              </Total>
+                {weekLazer && weekLazer.points && (
+                  <DayChart
+                    key={weekLazer.key}
+                    days={weekLazer.dates}
+                    points={weekLazer.points}
+                    colors={weekLazer.colors}
+                    fator={3}
+                    max={7}
+                  />
+                )}
 
-              {buttonShow ? (
-                <SubmitButton onPress={this.handleSubmit}>Salvar</SubmitButton>
-              ) : null}
-            </List>
+                <ButtonName>
+                  Vida Amorosa
+                  <Icon
+                    name="help"
+                    size={20}
+                    iconStyle={{marginLeft: 20, marginTop: 10}}
+                    color="#333"
+                    onPress={this.toggleModal.bind(this, 'amor')}
+                  />
+                </ButtonName>
+                <ContainerRadio>
+                  {amor.map((item, key) => (
+                    <RadioButton
+                      disabled={disabled}
+                      key={key}
+                      button={item}
+                      onClick={this.changeamorButton.bind(this, key)}
+                    />
+                  ))}
+                </ContainerRadio>
+
+                {weekAmor && weekAmor.points && (
+                  <DayChart
+                    key={weekAmor.key}
+                    days={weekAmor.dates}
+                    points={weekAmor.points}
+                    colors={weekAmor.colors}
+                    fator={3}
+                    max={7}
+                  />
+                )}
+
+                <Total>
+                  <TotalText>Total</TotalText>
+                  <TotalValue>{total}</TotalValue>
+                </Total>
+
+                {buttonShow ? (
+                  <SubmitButton onPress={this.handleSubmit}>
+                    Salvar
+                  </SubmitButton>
+                ) : null}
+              </List>
+            </MainView>
           </Container>
           {/* ) : null} */}
         </Background>
@@ -576,6 +653,13 @@ Week.propTypes = {
 };
 
 Week.navigationOptions = {
+  animationEnabled: false,
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: 0,
+    },
+  }),
   title: null,
   tabBarLabel: 'Minha semana',
   tabBarIcon: ({tintColor}) => (

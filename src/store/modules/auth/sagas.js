@@ -27,7 +27,7 @@ export function* signIn({payload}) {
 
     // history.push('/dashboard');
   } catch (err) {
-    Alert.alert('Falha na autenticação', 'verifique seus dados');
+    Alert.alert('Falha na autenticação', 'verifique seus dados \n' + err);
     yield put(signFailure());
   }
 }
@@ -60,7 +60,27 @@ export function* signUp({payload}) {
     yield put(signInSuccess(token, user));
   } catch (err) {
     Alert.alert('Falha no cadastro', err);
+    yield put(signFailure());
+  }
+}
 
+export function* setPassword({payload}) {
+  try {
+    const {email, password, code} = payload;
+
+    const response = yield call(api.post, 'npassword', {
+      code,
+      email,
+      password,
+    });
+
+    const {token, user} = response.data;
+
+    api.defaults.headers.Authorization = `Bearer ${token}`;
+
+    yield put(signInSuccess(token, user));
+  } catch (err) {
+    Alert.alert('Falha ao criar a senha', err);
     yield put(signFailure());
   }
 }
@@ -80,5 +100,6 @@ export function setToken({payload}) {
 export default all([
   takeLatest('persist/REHYDRATE', setToken),
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
+  takeLatest('@auth/SIGN_UP_PASSWORD', setPassword),
   takeLatest('@auth/SIGN_UP_REQUEST', signUp),
 ]);

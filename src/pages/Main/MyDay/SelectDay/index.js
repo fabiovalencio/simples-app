@@ -7,31 +7,31 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import CalendarPicker from 'react-native-calendar-picker';
+import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import RadioForm from 'react-native-simple-radio-button';
 import {format, getYear} from 'date-fns';
-import moment from 'moment';
+import pt from 'date-fns/locale/pt';
 import Modal from 'react-native-modal';
 import Orientation from 'react-native-orientation-locker';
-import pt from 'date-fns/locale/pt';
-import CalendarPicker from 'react-native-calendar-picker';
+import RadioButton from '~/components/RadioButton';
+import RadioForm from 'react-native-simple-radio-button';
+import api from '~/services/api';
+import Background from '~/components/Background';
 import OneSignal from 'react-native-onesignal';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Standard from '~/pages/Main/Config/Standard';
-import RadioButton from '~/components/RadioButton';
-import api from '~/services/api';
-import Background from '~/components/Background';
-
+import DayChart from '~/components/DayChart';
+import * as json from '../../Config/Standard/text.json';
 import {
   Container,
   ContainerRadio,
   View,
-  DateButton,
   DateText,
   List,
   ButtonName,
-  Separator,
+  MainView,
   Total,
   TotalText,
   TotalValue,
@@ -40,6 +40,17 @@ import {
   HelloName,
   Name,
 } from '../../MyWeek/Week/styles';
+
+import {
+  ViewButton,
+  LeftButton,
+  RightButton,
+  DateButton,
+  ViewModal,
+  Text,
+  WorkoutModal,
+  ButtonClose,
+} from './styles';
 
 export default class SelectDay extends Component {
   static propTypes = {
@@ -62,15 +73,21 @@ export default class SelectDay extends Component {
 
     this.state = {
       isModalVisible: false,
+      isModalWorkoutVisible: false,
       showAlert: false,
       user: {},
       date: new Date(),
+      subjects: [],
       sono: [],
       alimentacao: [],
       meditacao: [],
       dataSono: [],
+      weekSono: [],
       dataAlimentacao: [],
+      weekAlimentacao: [],
       dataMeditacao: [],
+      weekMeditacao: [],
+      weekExercicio: [],
       sonoValue: null,
       alimentacaoValue: null,
       meditacaoValue: null,
@@ -88,6 +105,7 @@ export default class SelectDay extends Component {
       phrase: 'como foi o seu dia?',
       dataFromApi: false,
       dataModal: null,
+      week: null,
     };
 
     OneSignal.getPermissionSubscriptionState(async (status) => {
@@ -116,9 +134,9 @@ export default class SelectDay extends Component {
       locale: pt,
     });
 
-    this.setState({dateFormated: formatted});
-
     const subjects = await api.get('/subjects');
+
+    this.setState({dateFormated: formatted, subjects});
 
     this.fecthDataJson(subjects.data.subject, 'Sono');
     this.fecthDataJson(subjects.data.subject, 'Alimentação');
@@ -174,17 +192,17 @@ export default class SelectDay extends Component {
     if (!user.name) {
       const userData = await api.get('/user');
       await new Promise((resolve) =>
-        this.setState({user: userData.data.user}, () => resolve()),
+        this.setState(
+          {
+            user: userData.data.user,
+            minDate: moment(userData.data.user.createdAt)
+              .utc()
+              .format('YYYY-MM-DD'),
+          },
+          () => resolve(),
+        ),
       );
     }
-
-    const week = await api.get('/user-week-days', {
-      params: {
-        date,
-      },
-    });
-    const minDate = moment(week.data.week[0]).utc().format('YYYY-MM-DD');
-    this.state.minDate = minDate;
   }
 
   setTotal() {
@@ -257,20 +275,122 @@ export default class SelectDay extends Component {
     }
   }
 
+  setDataWeek = (name, data) => {
+    if (name === 'Sono') {
+      this.setState({weekSono: data});
+    } else if (name === 'Alimentação') {
+      this.setState({weekAlimentacao: data});
+    } else if (name === 'Meditação') {
+      this.setState({weekMeditacao: data});
+    }
+  };
+
   onButtonPress = () => {
     const {isModalVisible} = this.state;
     this.setState({isModalVisible: !isModalVisible});
   };
 
+  getWeekNoteData = async (week) => {
+    const {subjects} = this.state;
+    const that = this;
+
+    subjects.data.subject.forEach(async function (v, k) {
+      let colors = [];
+      let dates = [];
+      let points = [];
+      let arr = [];
+
+      let res = await api.get(`week/${week}/note/${v.id}`);
+
+      res.data.data.forEach(async function (n, i) {
+        let p = n.points === 0 ? 0.01 : n.points;
+        points.push(p);
+
+        let d = n.date.split('-');
+        d = `${d[2]}/${d[1]}`;
+        dates.push(`${d}`);
+      });
+      colors = v.color.split(',');
+
+      const json = {
+        points,
+        dates,
+        colors,
+        key: v.name + week,
+      };
+      arr.push(json);
+
+      that.setDataWeek(v.name, arr[0]);
+    });
+  };
+
+  getWeekWorkoutData = async (week) => {
+    const that = this;
+    const result = await api.get(`/week/${week}/workout`);
+    const {data, date} = result.data;
+
+    let arr = [];
+    let key = `workout${week}`;
+    let arrColors = ['CCEEFF', '2196F3'];
+    let arrDate = [];
+    let arrData = [];
+    var lwd = moment(date[1]);
+    var today = moment();
+    let dtIni = moment(date[0]).utc().format('YYYY-MM-DD');
+    let dtEnd =
+      lwd > today
+        ? moment().utc().format('YYYY-MM-DD')
+        : moment(date[1]).utc().format('YYYY-MM-DD');
+    let dtI = new Date(dtIni);
+    let dtE = new Date(dtEnd);
+
+    while (dtI <= dtE) {
+      let d = new Date(dtI);
+      let dc = d.toISOString().slice(0, 10);
+
+      let ad = moment(dc).utc().format('DD/MM');
+      arrDate.push(`${ad}`);
+
+      if (Array.isArray(data)) {
+        let check = data.find((x) => x.date === dc) ? 1 : 0.01;
+        arrData.push(check);
+      }
+      dtI.setDate(dtI.getDate() + 1);
+    }
+
+    const json = {
+      points: arrData,
+      dates: arrDate,
+      colors: arrColors,
+      key,
+    };
+
+    arr.push(json);
+
+    that.setState({weekExercicio: arr[0]});
+  };
+
   async changeDate(dt) {
     const date = new Date(dt);
+
     const formatted = format(date, "dd 'de' MMM 'de' yyyy", {
       locale: pt,
     });
 
-    this.setState({date, dateFormated: formatted, display: 'none'});
+    this.setState({
+      date,
+      dateFormated: formatted,
+      display: 'none',
+      dataFromApi: false,
+    });
 
     try {
+      const dataWeek = await api.get('/user-week-number', {
+        params: {
+          date,
+        },
+      });
+
       const notes = await api.get('/notes', {
         params: {
           date,
@@ -282,6 +402,14 @@ export default class SelectDay extends Component {
           date,
         },
       });
+
+      if (dataWeek.data.week) {
+        this.getWeekNoteData(dataWeek.data.week);
+      }
+
+      if (dataWeek.data.week) {
+        this.getWeekWorkoutData(dataWeek.data.week);
+      }
 
       if (notes.data.notes) {
         this.setData(notes.data.notes);
@@ -385,6 +513,27 @@ export default class SelectDay extends Component {
     this.state.exercicioValue = index;
     this.changeButtonState();
   }
+
+  navigationDayLeft = () => {
+    const {date, minDate} = this.state;
+
+    let dt = moment(date).add(-1, 'days');
+
+    if (dt <= minDate) {
+      return;
+    }
+    this.changeDate(dt);
+  };
+
+  navigationDayRight = () => {
+    const {date} = this.state;
+    let dt = moment(date).add(1, 'days');
+
+    if (dt > new Date()) {
+      return;
+    }
+    this.changeDate(dt);
+  };
 
   async handleSubmit() {
     const {
@@ -502,6 +651,11 @@ export default class SelectDay extends Component {
     this.setState({isModalVisible: !isModalVisible});
   }
 
+  toggleWorkoutModal = () => {
+    const {isModalWorkoutVisible} = this.state;
+    this.setState({isModalWorkoutVisible: !isModalWorkoutVisible});
+  };
+
   render() {
     const {
       user,
@@ -514,6 +668,11 @@ export default class SelectDay extends Component {
       isModalVisible,
       dataModal,
       showAlert,
+      weekSono,
+      weekAlimentacao,
+      weekMeditacao,
+      weekExercicio,
+      isModalWorkoutVisible,
     } = this.state;
 
     return (
@@ -542,10 +701,10 @@ export default class SelectDay extends Component {
               <ScrollView
                 scrollEnabled={false}
                 keyboardShouldPersistTaps="handled">
-                <View style={{flex: 1}}>
-                  <Button title="X" onPress={this.onButtonPress} />
+                <Button title="X" onPress={this.onButtonPress} />
+                <ViewModal style={{flex: 1}}>
                   <Standard data={dataModal} onPress={this.handleSubmit} />
-                </View>
+                </ViewModal>
               </ScrollView>
             </KeyboardAvoidingView>
           </Modal>
@@ -553,17 +712,23 @@ export default class SelectDay extends Component {
         <Background>
           <Container>
             {/* <DateInput date={this.state.date} onChange={this.changeDate} /> */}
-            <View>
+            <ViewButton>
+              <LeftButton onPress={this.navigationDayLeft}>
+                <Icon name="chevron-left" color="#3b9eff" size={20} />
+              </LeftButton>
               <DateButton
                 onPress={() => {
                   this.setState({
                     display: display === 'none' ? 'flex' : 'none',
                   });
                 }}>
-                <Icon name="event" color="#3b9eff" size={20} />
+                {/* <Icon name="event" color="#3b9eff" size={20} /> */}
                 <DateText>{dateFormated}</DateText>
               </DateButton>
-            </View>
+              <RightButton onPress={this.navigationDayRight}>
+                <Icon name="chevron-right" color="#3b9eff" size={20} />
+              </RightButton>
+            </ViewButton>
 
             {minDate ? (
               <ViewPoint display={display}>
@@ -597,106 +762,148 @@ export default class SelectDay extends Component {
               </ViewPoint>
             ) : null}
 
-            <List>
-              <Name>
-                <HelloName>Olá {user ? user.name : null},</HelloName>
-                {'\n'} {'\n'} {phrase}
-              </Name>
-              <ButtonName>
-                Sono
-                <Icon
-                  name="help"
-                  size={20}
-                  iconStyle={{marginLeft: 20, marginTop: 10}}
-                  color="#333"
-                  onPress={this.toggleModal.bind(this, 'sono')}
-                />
-              </ButtonName>
-              <ContainerRadio>
-                {this.state.sono.map((item, key) => (
-                  <RadioButton
-                    disabled={disabled}
-                    key={key}
-                    button={item}
-                    onClick={this.changeSonoButton.bind(this, key)}
+            <MainView>
+              <List bounces={false}>
+                <Name>
+                  <HelloName>Olá {user ? user.name : null},</HelloName>
+                  {'\n'} {'\n'} {phrase}
+                </Name>
+                <ButtonName>
+                  Sono
+                  <Icon
+                    name="help"
+                    size={20}
+                    iconStyle={{marginLeft: 20, marginTop: 10}}
+                    color="#333"
+                    onPress={this.toggleModal.bind(this, 'sono')}
                   />
-                ))}
-              </ContainerRadio>
-
-              <Separator>__ _ __</Separator>
-
-              <ButtonName>
-                Alimentação
-                <Icon
-                  name="help"
-                  size={20}
-                  style={{marginLeft: 20, marginTop: 10}}
-                  color="#333"
-                  onPress={this.toggleModal.bind(this, 'alimentacao')}
-                />
-              </ButtonName>
-              <ContainerRadio>
-                {this.state.alimentacao.map((item, key) => (
-                  <RadioButton
-                    disabled={this.state.disabled}
-                    key={key}
-                    button={item}
-                    onClick={this.changeAlimentacaoButton.bind(this, key)}
+                </ButtonName>
+                <ContainerRadio>
+                  {this.state.sono.map((item, key) => (
+                    <RadioButton
+                      disabled={disabled}
+                      key={key}
+                      button={item}
+                      onClick={this.changeSonoButton.bind(this, key)}
+                    />
+                  ))}
+                </ContainerRadio>
+                {weekSono && weekSono.points && (
+                  <DayChart
+                    key={weekSono.key}
+                    days={weekSono.dates}
+                    points={weekSono.points}
+                    colors={weekSono.colors}
                   />
-                ))}
-              </ContainerRadio>
+                )}
 
-              <Separator>__ _ __</Separator>
-
-              <ButtonName>
-                Meditação
-                <Icon
-                  name="help"
-                  size={20}
-                  defaultStyle={{marginLeft: 20, marginTop: 10}}
-                  color="#333"
-                  onPress={this.toggleModal.bind(this, 'meditacao')}
-                />
-              </ButtonName>
-              <ContainerRadio>
-                {this.state.meditacao.map((item, key) => (
-                  <RadioButton
-                    disabled={this.state.disabled}
-                    key={key}
-                    button={item}
-                    onClick={this.changeMeditacaoButton.bind(this, key)}
+                <ButtonName>
+                  Alimentação
+                  <Icon
+                    name="help"
+                    size={20}
+                    style={{marginLeft: 20, marginTop: 10}}
+                    color="#333"
+                    onPress={this.toggleModal.bind(this, 'alimentacao')}
                   />
-                ))}
-              </ContainerRadio>
+                </ButtonName>
+                <ContainerRadio>
+                  {this.state.alimentacao.map((item, key) => (
+                    <RadioButton
+                      disabled={this.state.disabled}
+                      key={key}
+                      button={item}
+                      onClick={this.changeAlimentacaoButton.bind(this, key)}
+                    />
+                  ))}
+                </ContainerRadio>
 
-              <Separator>__ _ __</Separator>
+                {weekAlimentacao.points && weekAlimentacao.dates && (
+                  <DayChart
+                    key={weekAlimentacao.key}
+                    days={weekAlimentacao.dates}
+                    points={weekAlimentacao.points}
+                    colors={weekAlimentacao.colors}
+                  />
+                )}
 
-              <ButtonName>Exercício</ButtonName>
-              <RadioForm
-                ref={(child) => {
-                  this.child = child;
-                }}
-                {...this.props}
-                disabled={this.state.disabled}
-                radio_props={this.state.exercicio}
-                initial={this.state.exercicioValue}
-                formHorizontal
-                style={{
-                  marginStart: 30,
-                  marginTop: 20,
-                }}
-                onPress={this.changeExercicioButton.bind(this)}
-              />
+                <ButtonName>
+                  Meditação
+                  <Icon
+                    name="help"
+                    size={20}
+                    defaultStyle={{marginLeft: 20, marginTop: 10}}
+                    color="#333"
+                    onPress={this.toggleModal.bind(this, 'meditacao')}
+                  />
+                </ButtonName>
+                <ContainerRadio>
+                  {this.state.meditacao.map((item, key) => (
+                    <RadioButton
+                      disabled={this.state.disabled}
+                      key={key}
+                      button={item}
+                      onClick={this.changeMeditacaoButton.bind(this, key)}
+                    />
+                  ))}
+                </ContainerRadio>
 
-              <Total>
-                <TotalText>Total</TotalText>
-                <TotalValue>{this.state.total}</TotalValue>
-              </Total>
+                {weekMeditacao && weekMeditacao.points && (
+                  <DayChart
+                    key={weekMeditacao.key}
+                    days={weekMeditacao.dates}
+                    points={weekMeditacao.points}
+                    colors={weekMeditacao.colors}
+                  />
+                )}
 
-              {this.state.buttonShow ? (
-                <SubmitButton onPress={this.handleSubmit}>Salvar</SubmitButton>
-              ) : null}
-            </List>
+                <ButtonName>
+                  Exercício
+                  <Icon
+                    name="help"
+                    size={20}
+                    defaultStyle={{marginLeft: 20, marginTop: 10}}
+                    color="#333"
+                    onPress={this.toggleWorkoutModal}
+                  />
+                </ButtonName>
+                <RadioForm
+                  ref={(child) => {
+                    this.child = child;
+                  }}
+                  {...this.props}
+                  animation={false}
+                  disabled={this.state.disabled}
+                  radio_props={this.state.exercicio}
+                  initial={this.state.exercicioValue}
+                  formHorizontal
+                  style={{
+                    marginStart: 30,
+                    marginTop: 20,
+                  }}
+                  onPress={this.changeExercicioButton.bind(this)}
+                />
+                {weekExercicio && weekExercicio.points && (
+                  <DayChart
+                    key={weekExercicio.key}
+                    days={weekExercicio.dates}
+                    points={weekExercicio.points}
+                    colors={weekExercicio.colors}
+                  />
+                )}
+
+                <Total>
+                  <TotalText>Total</TotalText>
+                  <TotalValue>{this.state.total}</TotalValue>
+                </Total>
+
+                {this.state.buttonShow ? (
+                  <SubmitButton onPress={this.handleSubmit}>
+                    Salvar
+                  </SubmitButton>
+                ) : null}
+              </List>
+            </MainView>
           </Container>
         </Background>
         <AwesomeAlert
@@ -718,6 +925,29 @@ export default class SelectDay extends Component {
             this.onAcceptNotification();
           }}
         />
+        <Modal
+          isVisible={isModalWorkoutVisible}
+          onPress={this.toggleWorkoutModal}>
+          <KeyboardAvoidingView
+            enabled
+            behavior={Platform.OS === 'android' ? undefined : 'position'}>
+            <ScrollView
+              scrollEnabled={false}
+              keyboardShouldPersistTaps="handled">
+              <WorkoutModal>
+                <ButtonClose>
+                  <Icon
+                    name="close"
+                    size={20}
+                    color="#333"
+                    onPress={this.toggleWorkoutModal}
+                  />
+                </ButtonClose>
+                <Text>{json['Exercício']}</Text>
+              </WorkoutModal>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </Modal>
       </>
     );
   }

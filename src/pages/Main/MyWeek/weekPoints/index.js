@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Keyboard, TextInput} from 'react-native';
+import {
+  Keyboard,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
 import Background from '~/components/Background';
@@ -16,31 +23,37 @@ import {
   PoinText,
   SubmitButton,
   ViewTextArea,
+  SimpleViewButton,
+  SimpleView,
+  ViewModal,
+  ButtonClose,
 } from './styles';
 
 const level0 = {
   color: '#FF4B4B',
   rgb: 'rgba(255, 75, 75, 0.3)',
-  title: 'Atenção',
-  message: 'Não desanime, continue criando hábitos saudáveis',
+  title: 'Semana difícil?',
+  message:
+    'Lembre-se: o recomeço é o mais importante, você pode tirar a diferença na próxima semana.',
 };
 const level1 = {
   color: '#FF8F35',
   rgb: 'rgba(255, 143, 53, 0.3)',
-  title: 'Bom',
-  message: 'Você está no caminho certo, continue criando hábitos saudáveis',
+  title: 'Semana na média?',
+  message:
+    'Ótimo, continue jogando para perceber o efeito do tempo na sua disciplina.',
 };
 const level2 = {
   color: '#FFD20F',
   rgb: 'rgba(255, 210, 15, 0.3)',
-  title: 'Muito bom',
-  message: 'Você já conhece o caminho, continue criando hábitos saudáveis',
+  title: 'Ótimo!',
+  message: 'Você já conhece o caminho, continue mantendo hábitos saudáveis.',
 };
 const level3 = {
   color: '#00FF40',
   rgb: 'rgba(0, 255, 64, 0.3)',
-  title: 'Parabéns',
-  message: 'Você já conhece o caminho, continue criando hábitos saudáveis',
+  title: 'Ótimo!',
+  message: 'Você já conhece o caminho, continue mantendo hábitos saudáveis.',
 };
 
 export default function weekPoints({navigation}) {
@@ -48,6 +61,7 @@ export default function weekPoints({navigation}) {
   const [points, setPoints] = useState(30);
   const [positive, setPositive] = useState('');
   const [negative, setNegative] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const negativeRef = useRef();
 
@@ -75,8 +89,8 @@ export default function weekPoints({navigation}) {
       });
     }
 
-    navigation.navigate('Report');
     Keyboard.dismiss();
+    setIsModalVisible(!isModalVisible);
   }
 
   return (
@@ -93,62 +107,93 @@ export default function weekPoints({navigation}) {
             <PoinText color={level.color}>{points}</PoinText>
           </Point>
         </ViewPoint>
-        <ViewTextArea>
-          <TitleView>Associações significativas</TitleView>
 
-          <TextInput
-            multiline
-            numberOfLines={3}
-            returnKeyType="next"
-            onSubmitEditing={() => negativeRef.current.focus()}
-            onChangeText={(text) => setPositive(text)}
-            value={positive}
-            placeholder="Associações positivas da semana"
-            style={{
-              alignSelf: 'center',
-              width: 300,
-              height: 100,
-              marginTop: 5,
-              marginBottom: 10,
-              backgroundColor: '#fff',
-              borderLeftWidth: 1,
-              borderRightWidth: 1,
-              borderTopWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: '#00FF40',
-              borderRadius: 8,
-              padding: 10,
-            }}
-          />
+        <SimpleViewButton>
+          <SubmitButton onPress={() => setIsModalVisible(!isModalVisible)}>
+            Associações Significativas
+          </SubmitButton>
+        </SimpleViewButton>
+        <SimpleView>
+          <SubmitButton onPress={() => navigation.goBack(null)}>
+            Fechar semana
+          </SubmitButton>
+        </SimpleView>
 
-          <TextInput
-            multiline
-            numberOfLines={3}
-            ref={negativeRef}
-            returnKeyType="send"
-            onSubmitEditing={handleSubmit}
-            onChangeText={(text) => setNegative(text)}
-            value={negative}
-            placeholder="Associações negativas da semana"
-            style={{
-              alignSelf: 'center',
-              width: 300,
-              height: 100,
-              marginTop: 5,
-              marginBottom: 10,
-              backgroundColor: '#fff',
-              borderLeftWidth: 1,
-              borderRightWidth: 1,
-              borderTopWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: '#FF4B4B',
-              borderRadius: 8,
-              padding: 10,
-            }}
-          />
+        <Modal
+          isVisible={isModalVisible}
+          onPress={() => setIsModalVisible(!isModalVisible)}>
+          <KeyboardAvoidingView
+            enabled
+            behavior={Platform.OS === 'android' ? undefined : 'position'}>
+            <ScrollView
+              scrollEnabled={false}
+              keyboardShouldPersistTaps="handled">
+              <ViewModal>
+                <ButtonClose>
+                  <Icon
+                    name="close"
+                    size={20}
+                    color="#333"
+                    onPress={() => setIsModalVisible(!isModalVisible)}
+                  />
+                </ButtonClose>
 
-          <SubmitButton onPress={handleSubmit}>Fechar semana</SubmitButton>
-        </ViewTextArea>
+                <TitleView>Associações Significativas</TitleView>
+
+                <TextInput
+                  multiline
+                  numberOfLines={4}
+                  returnKeyType="next"
+                  onSubmitEditing={() => negativeRef.current.focus()}
+                  onChangeText={(text) => setPositive(text)}
+                  value={positive}
+                  placeholder="Se a sua semana teve uma boa pontuação, anote neste espaço o porquê. Pode ser uma palavra ou uma frase. Isso vai fazer você se conhecer melhor, você vai poder sempre se lembrar daquilo que te faz bem."
+                  style={{
+                    alignSelf: 'center',
+                    width: 300,
+                    height: 130,
+                    marginTop: 5,
+                    marginBottom: 10,
+                    backgroundColor: '#fff',
+                    borderLeftWidth: 1,
+                    borderRightWidth: 1,
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                    borderColor: '#00FF40',
+                    borderRadius: 8,
+                    padding: 20,
+                  }}
+                />
+
+                <TextInput
+                  multiline
+                  numberOfLines={4}
+                  ref={negativeRef}
+                  returnKeyType="send"
+                  onSubmitEditing={handleSubmit}
+                  onChangeText={(text) => setNegative(text)}
+                  value={negative}
+                  placeholder="Se a sua semana teve uma pontuação ruim, anote neste espaço o porquê. Pode ser uma palavra ou uma frase. Isso vai fazer você se conhecer melhor, você vai saber o que é que não te faz bem. "
+                  style={{
+                    alignSelf: 'center',
+                    width: 300,
+                    height: 130,
+                    marginTop: 5,
+                    marginBottom: 10,
+                    backgroundColor: '#fff',
+                    borderLeftWidth: 1,
+                    borderRightWidth: 1,
+                    borderTopWidth: 1,
+                    borderBottomWidth: 1,
+                    borderColor: '#FF4B4B',
+                    borderRadius: 8,
+                    padding: 20,
+                  }}
+                />
+              </ViewModal>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </Modal>
       </Container>
     </Background>
   );

@@ -20,25 +20,24 @@ const propTypes = {
 const styles = StyleSheet.create({
   view: {
     flexDirection: 'row',
-    marginTop: 10,
-    height: 320,
-    width: 825,
+    height: '93%',
+    width: '98%',
     borderColor: '#fff',
     borderWidth: 1,
     borderRadius: 3,
   },
   chart: {
-    height: 310,
-    width: 780,
+    height: '90%',
+    width: '95%',
     marginHorizontal: 10,
     color: '#fff',
     marginVertical: 20,
   },
   xaxis: {
-    width: 800,
+    width: '100%',
     height: 10,
-    marginHorizontal: -820,
-    marginVertical: 300,
+    marginHorizontal: '-101%',
+    marginVertical: 313,
     marginRight: 20,
   },
 });
@@ -199,7 +198,7 @@ export default class FullScreen extends Component {
               data={weekData}
               svg={{stroke: 'rgba(255, 255, 255, 0.8)'}}
               gridMin={0}
-              gridMax={100}
+              gridMax={102}
               numberOfTicks={9}
               contentInset={{top: 10, bottom: 10}}>
               <Tooltip />

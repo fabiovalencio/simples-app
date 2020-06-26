@@ -31,7 +31,10 @@ export default class RadioButton extends Component {
               ]}>
               {this.props.button.gradient ? (
                 <LinearGradient
-                  style={[styles.gradient, {width: this.props.button.length}]}
+                  style={[
+                    styles.gradient,
+                    {width: this.props.button.length + 6},
+                  ]}
                   colors={[this.props.button.color, this.props.button.colorEnd]}
                   start={{x: 0, y: 1}}
                   end={{x: 1, y: 1}}

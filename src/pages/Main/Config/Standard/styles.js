@@ -2,9 +2,9 @@ import styled from 'styled-components/native';
 import Button from '~/components/Button';
 
 export const Container = styled.View`
-  padding: 10px 30px 10px 25px;
-  margin-left: -15px;
-  margin-right: -15px;
+  padding: 10px 30px 10px 30px;
+  margin-left: -30px;
+  margin-right: -30px;
   margin-bottom: -20px;
   background: #fff;
   border-radius: 8px;
@@ -58,4 +58,40 @@ export const TInput = styled.TextInput.attrs({
 
 export const SubmitButton = styled(Button)`
   margin: 5px 25px;
+`;
+
+export const Text = styled.Text`
+  color: #333;
+  font-size: 13px;
+  text-align: left;
+  margin: -10px 5px;
+  width: 100%;
+`;
+
+export const ViewModal = styled.View`
+  margin: 0 0 20px;
+  padding: 20px;
+  align-content: center;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  flex: 1;
+  border: solid 1px;
+  border-color: rgba(0, 0, 0, 0.1);
+  background: #fff;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+`;
+
+export const ButtonName = styled.Text`
+  font-size: 17px;
+  color: #000;
+  margin: 10px 0 -35px 0;
+  align-self: flex-end;
+`;
+
+export const ButtonClose = styled.Text`
+  font-size: 17px;
+  color: #000;
+  margin: -10px -10px 5px 0;
+  align-self: flex-end;
 `;
