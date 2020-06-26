@@ -1,11 +1,8 @@
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable react/prefer-stateless-function */
 import React, {Component} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default class RadioButton extends Component {
-  // eslint-disable-next-line no-useless-constructor
   constructor() {
     super();
   }
@@ -34,7 +31,10 @@ export default class RadioButton extends Component {
               ]}>
               {this.props.button.gradient ? (
                 <LinearGradient
-                  style={[styles.gradient, {width: this.props.button.length}]}
+                  style={[
+                    styles.gradient,
+                    {width: this.props.button.length + 6},
+                  ]}
                   colors={[this.props.button.color, this.props.button.colorEnd]}
                   start={{x: 0, y: 1}}
                   end={{x: 1, y: 1}}

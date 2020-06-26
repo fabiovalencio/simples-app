@@ -5,23 +5,27 @@ import {Section, TableView, Separator} from 'react-native-tableview-simple';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Orientation from 'react-native-orientation-locker';
 import OneSignal from 'react-native-onesignal';
-import Background from '../../../components/Background';
+
+import Background from '~/components/Background';
+import {signOut} from '~/store/modules/auth/actions';
+import CCell from '~/components/CCell';
 import {Container, Border} from './styles';
-import {signOut} from '../../../store/modules/auth/actions';
-import CCell from '../../../components/CCell';
 
 export default function Config({navigation}) {
-  const user = useSelector(state => state.user.profile);
+  const user = useSelector((state) => state.user.profile);
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   useEffect(() => {
-    _willFocusSubscription = navigation.addListener('willFocus', payload => {
-      // lock to portrait when this screen is about to appear
-      Orientation.lockToPortrait();
-    });
+    this._willFocusSubscription = navigation.addListener(
+      'willFocus',
+      (payload) => {
+        // lock to portrait when this screen is about to appear
+        Orientation.lockToPortrait();
+      },
+    );
 
-    OneSignal.getPermissionSubscriptionState(async status => {
+    OneSignal.getPermissionSubscriptionState(async (status) => {
       if (status.subscriptionEnabled) {
         toggleSwitch();
       }
@@ -55,7 +59,7 @@ export default function Config({navigation}) {
 
   // open the native Modal
   function setNotification() {
-    OneSignal.getPermissionSubscriptionState(async status => {
+    OneSignal.getPermissionSubscriptionState(async (status) => {
       if (status.subscriptionEnabled) {
         OneSignal.setSubscription(false);
       } else {
@@ -64,10 +68,12 @@ export default function Config({navigation}) {
         });
 
         OneSignal.setSubscription(true);
-        const day = user.day ? user.day.toString() : null;
-        OneSignal.setExternalUserId(user.id);
-        OneSignal.setEmail(user.email);
-        OneSignal.sendTag('day', day);
+        const day = user.day ? user.day.toString() : 1;
+        setTimeout(function () {
+          OneSignal.setExternalUserId(user.id);
+          OneSignal.setEmail(user.email);
+          OneSignal.sendTag('day', day);
+        }, 1000);
       }
     });
     toggleSwitch();
@@ -77,7 +83,8 @@ export default function Config({navigation}) {
     table: {
       paddingTop: 50,
       paddingBottom: 20,
-      margin: 30,
+      margin: 10,
+      marginTop: 30,
       borderRadius: 8,
     },
   });

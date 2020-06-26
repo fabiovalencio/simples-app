@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Background from '../../../../components/Background';
+import Background from '~/components/Background';
 
 import {
   Container,
@@ -11,31 +11,36 @@ import {
   TitleView,
   Point,
   PoinText,
+  SimpleView,
+  StyledButton,
 } from './styles';
+import Button from '~/components/Button';
 
 const level0 = {
   color: '#FF4B4B',
   rgb: 'rgba(255, 75, 75, 0.3)',
-  title: 'Atenção',
-  message: 'Não desanime, continue criando hábitos saudáveis',
+  title: 'Dia difícil?',
+  message:
+    'Lembre-se: o recomeço é o mais importante, você pode tirar a diferença amanhã.',
 };
 const level1 = {
   color: '#FF8F35',
   rgb: 'rgba(255, 143, 53, 0.3)',
-  title: 'Bom',
-  message: 'Você está no caminho certo, continue criando hábitos saudáveis',
+  title: 'Dia na média?',
+  message:
+    'Ótimo, continue jogando para perceber o efeito do tempo na sua disciplina.',
 };
 const level2 = {
   color: '#FFD20F',
   rgb: 'rgba(255, 210, 15, 0.3)',
-  title: 'Muito bom',
-  message: 'Você já conhece o caminho, continue criando hábitos saudáveis',
+  title: 'Ótimo!',
+  message: 'Você já conhece o caminho, continue mantendo hábitos saudáveis.',
 };
 const level3 = {
   color: '#00FF40',
   rgb: 'rgba(0, 255, 64, 0.3)',
-  title: 'Parabéns',
-  message: 'Você já conhece o caminho, continue criando hábitos saudáveis',
+  title: 'Ótimo!',
+  message: 'Você já conhece o caminho, continue mantendo hábitos saudáveis.',
 };
 
 export default function dayConfirm({navigation}) {
@@ -49,7 +54,7 @@ export default function dayConfirm({navigation}) {
 
     if (points === 9 && exercise === 0) {
       setLevel(level3);
-    } else if (points >= 6) {
+    } else if (points >= 7) {
       setLevel(level2);
     } else if (points >= 4) {
       setLevel(level1);
@@ -71,6 +76,9 @@ export default function dayConfirm({navigation}) {
             <PoinText color={level.color}>{points}</PoinText>
           </Point>
         </ViewPoint>
+        <SimpleView>
+          <Button onPress={() => navigation.goBack(null)}>Fechar o dia</Button>
+        </SimpleView>
       </Container>
     </Background>
   );

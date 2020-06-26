@@ -12,7 +12,7 @@ export const List = styled.ScrollView.attrs({
   border-color: rgba(0, 0, 0, 0.1);
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  margin: 105px 30px 0 30px;
+  margin: 105px 10px 0 10px;
   background: #fff;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 `;

@@ -1,8 +1,8 @@
 import {Platform} from 'react-native';
 import styled from 'styled-components/native';
 
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import Input from '~/components/Input';
+import Button from '~/components/Button';
 
 export const Container = styled.KeyboardAvoidingView.attrs({
   enabled: Platform.OS === 'ios',
@@ -16,7 +16,7 @@ export const Container = styled.KeyboardAvoidingView.attrs({
 
 export const Form = styled.View`
   align-self: stretch;
-  margin-top: 50px;
+  margin-top: 10px;
 `;
 
 export const FormInput = styled(Input)`
@@ -28,7 +28,7 @@ export const SubmitButton = styled(Button)`
 `;
 
 export const SignLink = styled.TouchableOpacity`
-  margin-top: 20px;
+  margin-top: 10px;
   align-self: center;
 `;
 
@@ -68,6 +68,7 @@ export const DateText = styled.Text`
 
 export const Picker = styled.View`
   background: #fff;
+  color: #3b5998;
   position: relative;
   justify-content: flex-end;
 `;

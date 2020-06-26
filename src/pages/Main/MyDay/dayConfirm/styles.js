@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Button from '~/components/Button';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
@@ -10,7 +11,7 @@ export const ViewText = styled.View`
   flex-direction: column;
   align-self: center;
   align-content: center;
-  width: 300px;
+  width: 95%;
   height: 300px;
 `;
 
@@ -38,9 +39,9 @@ export const ViewPoint = styled.View`
   /* border: solid 3px; */
   border-color: rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  width: 300px;
+  width: 95%;
   height: 300px;
-  margin: 60% 30px;
+  margin: 60% 10px 20px 10px;
   background: #fff;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 `;
@@ -54,7 +55,7 @@ export const TitleView = styled.Text`
 `;
 
 export const Point = styled.View`
-  background: ${props => (props.rgb ? props.rgb : 'rgba(255, 143, 53, 0.3)')};
+  background: ${(props) => (props.rgb ? props.rgb : 'rgba(255, 143, 53, 0.3)')};
   width: 150px;
   height: 150px;
   border-radius: 75px;
@@ -67,8 +68,26 @@ export const PoinText = styled.Text`
   margin: 0;
   padding-top: 20%;
   font-size: 60px;
-  color: ${props => (props.color ? props.color : '#00FF40')};
+  color: ${(props) => (props.color ? props.color : '#00FF40')};
   align-self: center;
   align-content: center;
   font-weight: bold;
+`;
+
+export const SimpleView = styled.View`
+  position: absolute;
+  bottom: 0;
+  padding: 10px;
+  margin: 10px;
+  width: 95%;
+  background: #fff;
+  border-radius: 8px;
+  border: solid 1px;
+  border-color: rgba(0, 0, 0, 0.1);
+  background: #fff;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+`;
+
+export const SubmitButton = styled(Button)`
+  margin: 1px;
 `;

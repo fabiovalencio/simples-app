@@ -12,6 +12,13 @@ export function signInSuccess(token, user) {
   };
 }
 
+export function signUpPassword(email, password, code) {
+  return {
+    type: '@auth/SIGN_UP_PASSWORD',
+    payload: {email, password, code},
+  };
+}
+
 export function signUpRequest(name, email, password, city, gender, date) {
   return {
     type: '@auth/SIGN_UP_REQUEST',

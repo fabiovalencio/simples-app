@@ -9,7 +9,7 @@ import {Container, DateButton, DateText, Picker} from './styles';
 
 export default function DateInput({date, onChange}) {
   const [opened, setOpened] = useState(false);
-  const minDate = useSelector(state => state.user.profile.createdAt);
+  const minDate = useSelector((state) => state.user.profile.createdAt);
 
   const dateFormatted = useMemo(
     () => format(date, "dd 'de' MMM 'de' yyyy", {locale: pt}),

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Button from '~/components/Button';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
@@ -6,13 +7,25 @@ export const Container = styled.SafeAreaView`
 
 export const List = styled.ScrollView.attrs({
   showsVerticalScrollIndicator: false,
-  contentContainerStyle: {paddingLeft: 5},
 })`
+  flex-direction: row;
   border: solid 1px;
   border-color: rgba(0, 0, 0, 0.1);
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  margin: 0 30px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  margin-bottom: 120px;
+  background: #fff;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+`;
+
+export const MainView = styled.View`
+  padding: 10px;
+  margin: 10px;
+  background: #fff;
+  border-radius: 8px;
+  flex: 1;
+  border: solid 1px;
+  border-color: rgba(0, 0, 0, 0.1);
   background: #fff;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 `;
@@ -20,9 +33,24 @@ export const List = styled.ScrollView.attrs({
 export const View = styled.View`
   flex-direction: row;
   margin: 30px 2% 20px 2%;
-  /* background: rgba(255, 255, 255, 0.1); */
   align-content: center;
   align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  border: solid 1px;
+  border-color: rgba(0, 0, 0, 0.1);
+  background: #fff;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+`;
+
+export const ViewModal = styled.View`
+  align-content: center;
+  align-items: center;
+  background: #fff;
+`;
+
+export const ViewTableModal = styled.View`
+  background: #fff;
 `;
 
 export const LeftButton = styled.TouchableOpacity`
@@ -98,4 +126,20 @@ export const Stretch = styled.Image`
   right: 0;
   width: 30px;
   height: 30px;
+  background: transparent;
+`;
+
+export const SimpleView = styled.View`
+  padding: 10px;
+  margin: 10px;
+  background: #fff;
+  border-radius: 8px;
+  border: solid 1px;
+  border-color: rgba(0, 0, 0, 0.1);
+  background: #fff;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+`;
+
+export const StyledButton = styled(Button)`
+  margin: 1px;
 `;
