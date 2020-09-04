@@ -63,7 +63,7 @@ export default function Config({navigation}) {
       if (status.subscriptionEnabled) {
         OneSignal.setSubscription(false);
       } else {
-        OneSignal.init('5051f00e-2545-4962-b90a-d749333b932a', {
+        OneSignal.init('375aa12c-2930-4636-ab6f-a065bbcd19f2', {
           kOSSettingsKeyAutoPrompt: true,
         });
 

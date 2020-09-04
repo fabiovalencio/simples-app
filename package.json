@@ -1,6 +1,6 @@
 {
-  "name": "Simples",
-  "version": "1.0.3",
+  "name": "simples",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -16,8 +16,13 @@
     "@react-native-community/masked-view": "^0.1.7",
     "@react-navigation/bottom-tabs": "^5.2.5",
     "@types/moment": "^2.13.0",
+    "appcenter": "^3.1.1",
+    "appcenter-analytics": "^3.1.1",
+    "appcenter-crashes": "^3.1.1",
     "axios": "^0.19.2",
+    "code-push-cli": "^2.1.9",
     "date-fns": "^2.11.1",
+    "global": "^4.4.0",
     "immer": "^6.0.2",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",
@@ -80,6 +85,6 @@
   },
   "main": "index.js",
   "repository": "git@github.com:fabiovalencio/simples-app.git",
-  "author": "fabiovalencio <fabiovalencio@hotmail.com>",
+  "author": "fabiovalencio <fabiovalencio@me.com>",
   "license": "MIT"
 }

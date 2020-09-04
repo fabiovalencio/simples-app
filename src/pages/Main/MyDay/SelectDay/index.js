@@ -157,7 +157,7 @@ export default class SelectDay extends Component {
       showAlert: false,
     });
 
-    OneSignal.init('5051f00e-2545-4962-b90a-d749333b932a', {
+    OneSignal.init('375aa12c-2930-4636-ab6f-a065bbcd19f2', {
       kOSSettingsKeyAutoPrompt: true,
     });
     const day = user.day ? user.day.toString() : null;
@@ -172,7 +172,7 @@ export default class SelectDay extends Component {
     this.setState({
       showAlert: false,
     });
-    OneSignal.init('5051f00e-2545-4962-b90a-d749333b932a', {
+    OneSignal.init('375aa12c-2930-4636-ab6f-a065bbcd19f2', {
       kOSSettingsKeyAutoPrompt: false,
     });
   };
@@ -519,7 +519,7 @@ export default class SelectDay extends Component {
 
     let dt = moment(date).add(-1, 'days');
 
-    if (dt <= minDate) {
+    if (moment(dt).utc().format('YYYY-MM-DD') < minDate) {
       return;
     }
     this.changeDate(dt);

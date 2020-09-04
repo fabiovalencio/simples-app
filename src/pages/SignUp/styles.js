@@ -38,6 +38,11 @@ export const SignLinkText = styled.Text`
   font-size: 16px;
 `;
 
+export const InfoText = styled.Text`
+  color: #3b5998;
+  font-size: 13px;
+`;
+
 export const Stretch = styled.Image`
   width: 150px;
   height: 150px;

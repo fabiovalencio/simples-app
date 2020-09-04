@@ -64,6 +64,7 @@ export default class FullScreen extends Component {
       date: new Date(),
       weekData: [null, 0, 0, 0, 0, null],
       weekC: [],
+      weekNumber: [],
       orientation: deviceOrientation,
     };
   }
@@ -79,23 +80,28 @@ export default class FullScreen extends Component {
 
     const points = [];
     const weeks = [];
+    const weekn = [];
     const colors = [];
     points.push(null);
     weeks.push(null);
+    weekn.push(null);
 
     weeksPoints.data.weeks.forEach(function (v) {
       points.push(v.points);
       weeks.push({week: v.week, days: v.days, associations: v.associations});
       colors.push('#ccc333');
+      weekn.push(v.week);
     });
     points.push(null);
     weeks.push(null);
+    weekn.push(null);
 
     await new Promise((resolve) =>
       this.setState(
         {
           weekData: points,
           weekC: colors,
+          weekNumber: weekn,
         },
         () => resolve(),
       ),
@@ -116,7 +122,7 @@ export default class FullScreen extends Component {
   };
 
   render() {
-    const {weekData, weekC} = this.state;
+    const {weekData, weekC, weekNumber} = this.state;
     const label = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
     const Tooltip = ({x, y, data}) => {
@@ -208,7 +214,7 @@ export default class FullScreen extends Component {
               style={styles.xaxis}
               data={weekData}
               formatLabel={(index) =>
-                weekData[index] !== null ? `Sem ${index}` : ''
+                weekData[index] !== null ? `Sem ${weekNumber[index]}` : ''
               }
               contentInset={{left: 15, right: 15}}
               svg={{fontSize: 10, fill: 'white'}}

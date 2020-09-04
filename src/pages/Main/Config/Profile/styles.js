@@ -1,10 +1,22 @@
+import {Platform} from 'react-native';
 import styled from 'styled-components/native';
 
 import Input from '~/components/Input';
 import Button from '~/components/Button';
 
-export const Container = styled.SafeAreaView`
-  flex: 1;
+export const Container = styled.KeyboardAvoidingView.attrs({
+  enabled: Platform.OS === 'ios',
+  behavior: 'padding',
+})`
+  flex: 1px;
+  justify-content: center;
+  align-items: center;
+  padding: 0 30px;
+`;
+
+export const Form = styled.View`
+  align-self: stretch;
+  margin-top: 10px;
 `;
 
 export const Separator = styled.View`
@@ -19,13 +31,6 @@ export const Title = styled.Text`
   font-weight: bold;
   align-self: center;
   margin-top: 30px;
-`;
-
-export const Form = styled.ScrollView.attrs({
-  showsVerticalScrollIndicator: false,
-})`
-  align-self: stretch;
-  margin-top: 100px;
 `;
 
 export const FormInput = styled(Input)`
@@ -51,4 +56,28 @@ export const MainView = styled.View`
   border-color: rgba(0, 0, 0, 0.1);
   background: #fff;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+`;
+
+export const DateButton = styled.TouchableOpacity`
+  padding: 0 15px;
+  height: 46px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const DateText = styled.Text`
+  font-size: 14px;
+  color: #3b5998;
+  margin-left: 15px;
+  align-self: center;
+`;
+
+export const Picker = styled.View`
+  background: #fff;
+  color: #3b5998;
+  position: relative;
+  justify-content: flex-end;
 `;

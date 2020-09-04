@@ -41,21 +41,21 @@ export function* signUp({payload}) {
       email,
       password,
     });
-
     const {token, user} = response.data;
+    api.defaults.headers.Authorization = `Bearer ${token}`;
 
-    yield call(api.post, 'user-about', {
-      user_id: user.id,
-      birthday: date,
-      gender_id: gender,
-      city_id: city,
-    });
+    if (date && gender && city) {
+      yield call(api.post, 'user-about', {
+        user_id: user.id,
+        birthday: date,
+        gender_id: gender,
+        city_id: city,
+      });
+    }
 
     yield call(api.post, 'user-week', {
       user_id: user.id,
     });
-
-    api.defaults.headers.Authorization = `Bearer ${token}`;
 
     yield put(signInSuccess(token, user));
   } catch (err) {

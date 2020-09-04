@@ -493,7 +493,7 @@ export default class WeekResult extends Component {
                 svg={{fontSize: 10, fill: 'white'}}
               />
             </LinearGradient>
-            {height > 700 && (
+            {height > 800 && (
               <MainView>
                 <Table borderStyle={{borderWidth: 1}}>
                   <Row
@@ -520,7 +520,7 @@ export default class WeekResult extends Component {
               </MainView>
             )}
 
-            {height < 700 && (
+            {height <= 800 && (
               <SimpleView>
                 <StyledButton onPress={this.toggleTableModal}>
                   Tabela de pontos

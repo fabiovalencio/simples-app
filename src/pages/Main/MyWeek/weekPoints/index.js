@@ -68,11 +68,11 @@ export default function weekPoints({navigation}) {
   useEffect(() => {
     setPoints(navigation.getParam('points'));
 
-    if (points === 37) {
+    if (points === 22) {
       setLevel(level3);
-    } else if (points >= 25) {
-      setLevel(level2);
     } else if (points >= 15) {
+      setLevel(level2);
+    } else if (points >= 8) {
       setLevel(level1);
     } else {
       setLevel(level0);

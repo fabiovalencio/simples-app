@@ -1,8 +1,8 @@
-import React, {useRef, useState, useEffect, Fragment} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import {Keyboard, StyleSheet} from 'react-native';
+import {Keyboard, StyleSheet, Alert} from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -21,6 +21,7 @@ import {
   SubmitButton,
   SignLink,
   SignLinkText,
+  InfoText,
   Stretch,
   Separator,
   DateButton,
@@ -38,6 +39,7 @@ export default function SignUp({navigation}) {
   const [genders, setGenders] = useState([]);
   const [gender, setGender] = useState();
   const [date, setDate] = useState(new Date());
+  const now = useState(new Date());
   const [opened, setOpened] = useState(false);
   const [dateFormatted, setDateFormatted] = useState('');
 
@@ -77,9 +79,23 @@ export default function SignUp({navigation}) {
     setGender(id);
   }
 
-  function handleSubmit() {
-    dispatch(signUpRequest(name, email, password, city, gender, date));
-    Keyboard.dismiss();
+  async function handleSubmit() {
+    if (name && email && password) {
+      const response = await api.post('user-email', {email});
+
+      if (response.data.email) {
+        Alert.alert('E-mail já cadastrado');
+      } else {
+        try {
+          dispatch(signUpRequest(name, email, password, city, gender, date));
+          Keyboard.dismiss();
+        } catch (err) {
+          Alert.alert('Erro '.err);
+        }
+      }
+    } else {
+      Alert.alert('Preencha os campos obrigatórios');
+    }
   }
 
   return (
@@ -93,7 +109,7 @@ export default function SignUp({navigation}) {
             icon="person-outline"
             autoCorrect={false}
             autoCapitalize="none"
-            placeholder="Digite seu nome completo"
+            placeholder="* Digite seu nome completo"
             returnKeyType="next"
             onSubmitEditing={() => emailRef.current.focus()}
             value={name}
@@ -105,7 +121,7 @@ export default function SignUp({navigation}) {
             keyboardType="email-address"
             autoCorrect={false}
             autoCapitalize="none"
-            placeholder="Digite seu e-mail"
+            placeholder="* Digite seu e-mail"
             ref={emailRef}
             returnKeyType="next"
             onSubmitEditing={() => passwordRef.current.focus()}
@@ -116,7 +132,7 @@ export default function SignUp({navigation}) {
           <FormInput
             icon="lock-outline"
             secureTextEntry
-            placeholder="Digite sua senha"
+            placeholder="* Digite sua senha"
             ref={passwordRef}
             returnKeyType="next"
             value={password}
@@ -211,6 +227,7 @@ export default function SignUp({navigation}) {
             <SignLinkText>Já possuo uma conta</SignLinkText>
           </SignLink>
         </Form>
+        <InfoText>* preenchimento obrigatório</InfoText>
       </Container>
     </Background>
   );
