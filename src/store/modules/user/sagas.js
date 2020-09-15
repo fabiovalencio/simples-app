@@ -10,24 +10,19 @@ export function* updateProfile({payload}) {
     const {name, email, date, gender, city, ...rest} = payload.data;
 
     // Object.assign serve para unir objetos:
-    // eslint-disable-next-line prefer-object-spread
     const profile = Object.assign({name, email}, rest.oldPassword ? rest : {});
 
     const response = yield call(api.put, 'users', profile);
 
     const {id} = response.data;
 
-    try {
-      if (date && gender && city) {
-        yield call(api.post, 'user-about', {
-          user_id: id,
-          birthday: date,
-          gender_id: gender,
-          city_id: city,
-        });
-      }
-    } catch (e) {
-      console.tron.log(e);
+    if (date && gender && city) {
+      yield call(api.post, 'user-about', {
+        user_id: id,
+        birthday: date,
+        gender_id: gender,
+        city_id: city,
+      });
     }
 
     Alert.alert('Sucesso', 'Perfil atualizado com sucesso');

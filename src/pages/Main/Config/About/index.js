@@ -50,7 +50,7 @@ export default function About() {
               seu estado geral. {'\n'}
               Bom jogo para você!
             </Subtitle>
-            <Subtitle>versão: 1.0.2</Subtitle>
+            <Subtitle>versão: 1.0.0</Subtitle>
           </View>
         </List>
       </Container>

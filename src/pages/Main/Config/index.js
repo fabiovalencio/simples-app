@@ -37,6 +37,10 @@ export default function Config({navigation}) {
     dispatch(signOut());
   }
 
+  if (!user) {
+    handleLogout();
+  }
+
   function navigationProfile() {
     navigation.navigate('Profile');
   }
@@ -146,7 +150,7 @@ export default function Config({navigation}) {
                 <CCell
                   key="dia"
                   cellStyle="Basic"
-                  title={dayOfWeekAsString(user.day)}
+                  title={dayOfWeekAsString(user.day ? user.day : 1)}
                 />
               </Section>
 

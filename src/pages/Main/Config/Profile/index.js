@@ -75,7 +75,6 @@ export default function Profile() {
     }
 
     function setDataAbout(obj, st) {
-      console.tron.log(st);
       let bday = parseISO(obj.birthday);
       setDateFormatted(format(bday, "dd 'de' MMM 'de' yyyy", {locale: pt}));
       setDate(bday);

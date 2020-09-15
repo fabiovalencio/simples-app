@@ -134,7 +134,8 @@ export default function SignUp({navigation}) {
             secureTextEntry
             placeholder="* Digite sua senha"
             ref={passwordRef}
-            returnKeyType="next"
+            returnKeyType="send"
+            onSubmitEditing={handleSubmit}
             value={password}
             onChangeText={setPassword}
           />

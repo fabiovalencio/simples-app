@@ -44,6 +44,10 @@ export function* signUp({payload}) {
     const {token, user} = response.data;
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
+    yield call(api.post, 'user-week', {
+      user_id: user.id,
+    });
+
     if (date && gender && city) {
       yield call(api.post, 'user-about', {
         user_id: user.id,
@@ -52,10 +56,6 @@ export function* signUp({payload}) {
         city_id: city,
       });
     }
-
-    yield call(api.post, 'user-week', {
-      user_id: user.id,
-    });
 
     yield put(signInSuccess(token, user));
   } catch (err) {
@@ -68,7 +68,7 @@ export function* setPassword({payload}) {
   try {
     const {email, password, code} = payload;
 
-    const response = yield call(api.post, 'npassword', {
+    const response = yield call(api.put, 'npassword', {
       code,
       email,
       password,
