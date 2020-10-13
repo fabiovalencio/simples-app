@@ -71,6 +71,23 @@ export default class SelectDay extends Component {
       },
     );
 
+    OneSignal.setLogLevel(6, 0);
+
+  // Replace 'YOUR_ONESIGNAL_APP_ID' with your OneSignal App ID.
+    OneSignal.init('375aa12c-2930-4636-ab6f-a065bbcd19f2', {
+      kOSSettingsKeyAutoPrompt: false,
+      kOSSettingsKeyInAppLaunchURL: false,
+      kOSSettingsKeyInFocusDisplayOption: 2,
+    });
+  OneSignal.inFocusDisplaying(2); // Controls what should happen if a notification is received while the app is open. 2 means that the notification will go directly to the device's notification center.
+
+  // The promptForPushNotifications function code will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step below)
+  // OneSignal.promptForPushNotificationsWithUserResponse(myiOSPromptCallback);
+
+   OneSignal.addEventListener('received', this.onReceived);
+   OneSignal.addEventListener('opened', this.onOpened);
+   OneSignal.addEventListener('ids', this.onIds);
+
     this.state = {
       isModalVisible: false,
       isModalWorkoutVisible: false,
@@ -126,6 +143,21 @@ export default class SelectDay extends Component {
     this.toggleModal = this.toggleModal.bind(this);
   }
 
+  onReceived(notification) {
+    console.log("Notification received: ", notification);
+  }
+
+  onOpened(openResult) {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  }
+
+  onIds(device) {
+    console.log('Device info: ', device);
+  }
+
   componentDidMount = async () => {
     const {date} = this.state;
     await this.getUserData();
@@ -149,6 +181,9 @@ export default class SelectDay extends Component {
   componentWillUnmount() {
     // remove subscription when unmount
     this._willFocusSubscription.remove();
+    OneSignal.removeEventListener('received', this.onReceived);
+    OneSignal.removeEventListener('opened', this.onOpened);
+    OneSignal.removeEventListener('ids', this.onIds);
   }
 
   onAcceptNotification = () => {
@@ -157,10 +192,13 @@ export default class SelectDay extends Component {
       showAlert: false,
     });
 
-    OneSignal.init('5051f00e-2545-4962-b90a-d749333b932a', {
+    //ONESIGNAL ANDROID: 375aa12c-2930-4636-ab6f-a065bbcd19f2
+    //ONESIGNAL IOS: 5051f00e-2545-4962-b90a-d749333b932a
+
+    OneSignal.init('375aa12c-2930-4636-ab6f-a065bbcd19f2', {
       kOSSettingsKeyAutoPrompt: true,
     });
-    const day = user.day ? user.day.toString() : null;
+    const day = user.day ? user.day.toString() : 1;
     OneSignal.setExternalUserId(user.id);
     OneSignal.setEmail(user.email);
     OneSignal.sendTag('day', day);
@@ -172,7 +210,7 @@ export default class SelectDay extends Component {
     this.setState({
       showAlert: false,
     });
-    OneSignal.init('5051f00e-2545-4962-b90a-d749333b932a', {
+    OneSignal.init('375aa12c-2930-4636-ab6f-a065bbcd19f2', {
       kOSSettingsKeyAutoPrompt: false,
     });
   };
