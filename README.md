@@ -275,3 +275,13 @@ Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
 ## Contato
 
 Rocketseat - [Github](https://github.com/rocketseat) - **oi@rocketseat.com.br**
+
+
+## Executrar o projeto
+nvm use v12 (use a versão 12 do node)
+npm i
+npx react-native start
+npx react-native run-android
+
+## Status
+react-native info
