@@ -280,7 +280,7 @@ Rocketseat - [Github](https://github.com/rocketseat) - **oi@rocketseat.com.br**
 ## Executrar o projeto
 nvm use v12 (use a versão 12 do node)
 npm i
-npx react-native start
+npx react-native start --reset-cache
 npx react-native run-android
 
 ## Status

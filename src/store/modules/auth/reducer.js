@@ -1,4 +1,4 @@
-import produce from 'immer';
+import produce, { enableES5 } from 'immer';
 
 const INICIAL_STATE = {
   token: null,
@@ -7,6 +7,7 @@ const INICIAL_STATE = {
 };
 
 export default function auth(state = INICIAL_STATE, action) {
+  enableES5()
   return produce(state, (draft) => {
     switch (action.type) {
       case '@auth/SIGN_IN_REQUEST': {
@@ -18,6 +19,7 @@ export default function auth(state = INICIAL_STATE, action) {
         break;
       }
       case '@auth/SIGN_IN_SUCCESS': {
+        console.log(action);
         draft.token = action.payload.token;
         draft.signed = true;
         draft.loading = false;

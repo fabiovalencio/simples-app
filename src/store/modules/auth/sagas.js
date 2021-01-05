@@ -1,20 +1,20 @@
-import {Alert} from 'react-native';
-import {takeLatest, call, put, all} from 'redux-saga/effects';
+import { Alert } from 'react-native';
+import { takeLatest, call, put, all } from 'redux-saga/effects';
 
 import api from '~/services/api';
 
-import {signInSuccess, signFailure} from './actions';
+import { signInSuccess, signFailure } from './actions';
 
-export function* signIn({payload}) {
+export function* signIn({ payload }) {
   try {
-    const {email, password} = payload;
+    const { email, password } = payload;
 
     const response = yield call(api.post, 'session', {
       email,
       password,
     });
 
-    const {token, user} = response.data;
+    const { token, user } = response.data;
 
     if (user.provider) {
       Alert.alert('Erro', 'Usuário não pode ser um prestador de serviço');
@@ -32,9 +32,9 @@ export function* signIn({payload}) {
   }
 }
 
-export function* signUp({payload}) {
+export function* signUp({ payload }) {
   try {
-    const {name, email, password, city, gender, date} = payload;
+    const { name, email, password, city, gender, date } = payload;
 
     const response = yield call(api.post, 'users', {
       name,
@@ -42,7 +42,7 @@ export function* signUp({payload}) {
       password,
     });
 
-    const {token, user} = response.data;
+    const { token, user } = response.data;
 
     yield call(api.post, 'user-about', {
       user_id: user.id,
@@ -64,9 +64,9 @@ export function* signUp({payload}) {
   }
 }
 
-export function* setPassword({payload}) {
+export function* setPassword({ payload }) {
   try {
-    const {email, password, code} = payload;
+    const { email, password, code } = payload;
 
     const response = yield call(api.post, 'npassword', {
       code,
@@ -74,7 +74,7 @@ export function* setPassword({payload}) {
       password,
     });
 
-    const {token, user} = response.data;
+    const { token, user } = response.data;
 
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
@@ -85,12 +85,12 @@ export function* setPassword({payload}) {
   }
 }
 
-export function setToken({payload}) {
+export function setToken({ payload }) {
   if (!payload) {
     return;
   }
 
-  const {token} = payload.auth;
+  const { token } = payload.auth;
 
   if (token) {
     api.defaults.headers.Authorization = `Bearer ${token}`;
@@ -101,5 +101,23 @@ export default all([
   takeLatest('persist/REHYDRATE', setToken),
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
   takeLatest('@auth/SIGN_UP_PASSWORD', setPassword),
-  takeLatest('@auth/SIGN_UP_REQUEST', signUp),
+  // takeLatest('@auth/SIGN_UP_REQUEST', signUp),
+  takeLatest('@auth/SIGN_UP_REQUEST', async dispatch => {
+    try {
+      const { name, email, password } = dispatch.payload;
+      let data = { name, email, password };
+
+      let response = await api.post('users', data);
+
+      const { token, user } = response.data;
+
+      console.log(response.data)
+
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+      // signInSuccess(token, user)
+    } catch (err) {
+      Alert.alert('Falha no cadastro', err);
+      signFailure();
+    }
+  })
 ]);
